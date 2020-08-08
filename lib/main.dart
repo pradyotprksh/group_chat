@@ -20,7 +20,7 @@ class MyApp extends StatelessWidget {
     FirebaseAnalytics analytics = FirebaseAnalytics();
 
     return GetMaterialApp(
-      title: String.APP_NAME,
+      title: StringConstant.APP_NAME,
       darkTheme: ThemeData(
         brightness: Brightness.dark,
         primarySwatch: Colors.red,

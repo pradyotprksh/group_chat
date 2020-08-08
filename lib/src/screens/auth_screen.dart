@@ -27,7 +27,7 @@ class AuthScreen extends StatelessWidget {
                 children: <Widget>[
                   const Spacer(),
                   Text(
-                    String.APP_NAME,
+                    StringConstant.APP_NAME,
                     textAlign: TextAlign.center,
                     style: GoogleFonts.lemonada(
                       fontSize: 30,
@@ -71,8 +71,9 @@ class AuthScreen extends StatelessWidget {
                         Text(
                           "Sign in With Google",
                           style: GoogleFonts.asap(
-                              fontSize: 14,
-                              fontWeight: FontWeight.bold,
+                            fontSize: 14,
+                            color: Colors.black,
+                            fontWeight: FontWeight.bold,
                           ),
                         ),
                       ],
