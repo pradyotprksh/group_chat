@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "761688015932",
+    "firebase_url": "https://group-chat-d86ec.firebaseio.com",
+    "project_id": "group-chat-d86ec",
+    "storage_bucket": "group-chat-d86ec.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:761688015932:android:d96ad47d1cf9fb66172f39",
+        "android_client_info": {
+          "package_name": "com.project.pradyotprakash.group_chat"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "761688015932-bnurc8d5jidju0jb9h0gaosh42pjjob5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAjCq_k_YY5408MpMyUXHEycXInoVcGdj0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "761688015932-bnurc8d5jidju0jb9h0gaosh42pjjob5.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
