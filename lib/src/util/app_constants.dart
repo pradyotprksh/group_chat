@@ -1,21 +1,9 @@
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-
 class AppConstants {
-  static RxInt groupOwner = 0.obs;
-  static RxInt groupJoined = 0.obs;
-
-  static const Map<int, Color> primaryColor = {
-    50: Color.fromRGBO(248, 186, 26, .1),
-    100: Color.fromRGBO(248, 186, 26, .2),
-    200: Color.fromRGBO(248, 186, 26, .3),
-    300: Color.fromRGBO(248, 186, 26, .4),
-    400: Color.fromRGBO(248, 186, 26, .5),
-    500: Color.fromRGBO(248, 186, 26, .6),
-    600: Color.fromRGBO(248, 186, 26, .7),
-    700: Color.fromRGBO(248, 186, 26, .8),
-    800: Color.fromRGBO(248, 186, 26, .9),
-    900: Color.fromRGBO(248, 186, 26, 1),
-  };
-
+  static const MAIN_USER_UID = "74NeqBt63fV2PwKO3rPGIGIchAX2";
+  static const MAIN_GROUP_DESCRIPTION =
+      "A place where all the groupee will meet together";
+  static const DEFAULT_GROUP_PROFILE_IMAGE =
+      "https://image.flaticon.com/icons/png/512/16/16016.png";
+  static const DEFAULT_GROUP_PROFILE_BACKGROUND =
+      "https://images.unsplash.com/photo-1506869640319-fe1a24fd76dc?ixlib=rb-1.2.1&auto=format&fit=crop&w=2550&q=80";
 }

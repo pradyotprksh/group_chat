@@ -36,60 +36,97 @@ class GroupDetailBottomSheet extends StatelessWidget {
             var snapshot = groupSnapshot.data;
             return FutureBuilder(
               future: Firestore.instance
+                  .collection(FirestoreConstants.GROUPS)
+                  .document(groupName)
                   .collection(FirestoreConstants.USER)
-                  .document(snapshot[FirestoreConstants.CREATED_BY])
-                  .get(),
-              builder: (_, userSnapshot) {
-                if (userSnapshot.connectionState == ConnectionState.waiting) {
+                  .getDocuments(),
+              builder: (_, groupUsersSnapshot) {
+                if (groupUsersSnapshot.connectionState ==
+                    ConnectionState.waiting) {
                   return CenterCircularProgressBar();
-                } else if (userSnapshot.data == null) {
+                } else if (groupSnapshot.data == null) {
                   return CenterText("Not able to get group data.");
                 } else {
-                  var userData = userSnapshot.data;
-                  return SingleChildScrollView(
-                    child: Column(
-                      children: [
-                        FadeInImage(
-                          fit: BoxFit.cover,
-                          image: NetworkImage(
-                            snapshot[FirestoreConstants.GROUP_BACKGROUND_IMAGE],
-                          ),
-                          placeholder:
-                              AssetImage("assets/default_group_background.jpg"),
-                        ),
-                        ListTile(
-                          leading: CircleAvatar(
-                            backgroundColor: Colors.white,
-                            child: Container(
-                              padding: const EdgeInsets.all(
-                                8.0,
-                              ),
-                              child: Image.network(
-                                snapshot[
-                                    FirestoreConstants.GROUP_PROFILE_IMAGE],
+                  return FutureBuilder(
+                    future: Firestore.instance
+                        .collection(FirestoreConstants.USER)
+                        .document(snapshot[FirestoreConstants.CREATED_BY])
+                        .get(),
+                    builder: (_, userSnapshot) {
+                      if (userSnapshot.connectionState ==
+                          ConnectionState.waiting) {
+                        return CenterCircularProgressBar();
+                      } else if (userSnapshot.data == null) {
+                        return CenterText("Not able to get group data.");
+                      } else {
+                        var userData = userSnapshot.data;
+                        return SingleChildScrollView(
+                          child: Column(
+                            children: [
+                              FadeInImage(
                                 fit: BoxFit.cover,
+                                image: NetworkImage(
+                                  snapshot[FirestoreConstants
+                                      .GROUP_BACKGROUND_IMAGE],
+                                ),
+                                placeholder: AssetImage(
+                                    "assets/default_group_background.jpg"),
                               ),
-                            ),
+                              Tooltip(
+                                message: "Go To Group",
+                                child: ListTile(
+                                  onTap: () {},
+                                  leading: CircleAvatar(
+                                    backgroundColor: Colors.white,
+                                    child: Container(
+                                      padding: const EdgeInsets.all(
+                                        8.0,
+                                      ),
+                                      child: Image.network(
+                                        snapshot[FirestoreConstants
+                                            .GROUP_PROFILE_IMAGE],
+                                        fit: BoxFit.cover,
+                                      ),
+                                    ),
+                                  ),
+                                  trailing: Icon(
+                                    Icons.arrow_right,
+                                    color: Colors.white,
+                                  ),
+                                  title: Text(
+                                    snapshot[FirestoreConstants.GROUP_NAME],
+                                    style: GoogleFonts.asap(fontSize: 18.0),
+                                  ),
+                                  subtitle: Text(
+                                    snapshot[
+                                        FirestoreConstants.GROUP_DESCRIPTION],
+                                    style: GoogleFonts.asap(),
+                                  ),
+                                ),
+                              ),
+                              Divider(),
+                              ListTile(
+                                title: Text(
+                                  "Created On ${Utility.getTimeFromTimeStamp(snapshot[FirestoreConstants.CREATED_ON])}",
+                                ),
+                                subtitle: Text(
+                                    "By ${userData[FirestoreConstants.USER_NAME]}"),
+                              ),
+                              ListTile(
+                                title: Text(
+                                  "${groupUsersSnapshot.data.documents.length} users has joined the group",
+                                ),
+                                subtitle: Text(snapshot[
+                                            FirestoreConstants.GROUP_SIZE] ==
+                                        0
+                                    ? ""
+                                    : "${snapshot[FirestoreConstants.GROUP_SIZE] - groupUsersSnapshot.data.documents.length} space left"),
+                              ),
+                            ],
                           ),
-                          title: Text(
-                            snapshot[FirestoreConstants.GROUP_NAME],
-                            style: GoogleFonts.asap(fontSize: 18.0),
-                          ),
-                          subtitle: Text(
-                            snapshot[FirestoreConstants.GROUP_DESCRIPTION],
-                            style: GoogleFonts.asap(),
-                          ),
-                        ),
-                        Divider(),
-                        ListTile(
-                          title: Text(
-                            "Created On ${Utility.getTimeFromTimeStamp(snapshot[FirestoreConstants.CREATED_ON])}",
-                          ),
-                          subtitle: Text(
-                              "By ${userData[FirestoreConstants.USER_NAME]}"),
-                        ),
-                      ],
-                    ),
+                        );
+                      }
+                    },
                   );
                 }
               },

@@ -16,4 +16,9 @@ class FirestoreConstants {
   static const JOINED_ON = "joined_on";
   static const IS_OWNER = "is_owner";
   static const GROUPS_INVITE = "groups_invite";
+  static const MESSAGES = "messages";
+  static const IS_JOINED_MESSAGE = "is_joined_message";
+  static const MESSAGE_ON = "message_on";
+  static const IS_CREATED_MESSAGE = "is_created_message";
+  static const MESSAGE = "message";
 }

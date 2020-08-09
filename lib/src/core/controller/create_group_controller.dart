@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:group_chat/src/util/app_constants.dart';
 import 'package:group_chat/src/util/firestore_constants.dart';
 import 'package:group_chat/src/util/utility.dart';
 
@@ -31,22 +32,38 @@ class CreateGroupController extends GetxController {
         // get current user
         FirebaseAuth.instance.currentUser().then((currentUser) {
           if (currentUser != null) {
-            // get current user groups
+            // create group
             Firestore.instance
                 .collection(FirestoreConstants.GROUPS)
-                .where(FirestoreConstants.CREATED_BY,
-                    isEqualTo: currentUser.uid)
-                .getDocuments()
-                .then((currentUserGroups) {
-              if (currentUserGroups.documents.length > 3) {
-                Utility.showSnackBar(
-                  "You have exceeded your group owner count. Please delete some of the groups to create new.",
-                  Colors.red,
-                );
-                updateLoading();
-              } else {
-                // create group
+                .document(groupName)
+                .setData({
+              FirestoreConstants.GROUP_NAME: groupName,
+              FirestoreConstants.GROUP_DESCRIPTION: groupDescription,
+              FirestoreConstants.GROUP_SIZE: 100,
+              FirestoreConstants.CREATED_BY: currentUser.uid,
+              FirestoreConstants.CREATED_ON:
+                  DateTime.now().millisecondsSinceEpoch,
+              FirestoreConstants.GROUP_PROFILE_IMAGE:
+                  AppConstants.DEFAULT_GROUP_PROFILE_IMAGE,
+              FirestoreConstants.GROUP_BACKGROUND_IMAGE:
+                  AppConstants.DEFAULT_GROUP_PROFILE_BACKGROUND,
+            }).then((value) {
+              // add the current user to the group
+              Firestore.instance
+                  .collection(FirestoreConstants.GROUPS)
+                  .document(groupName)
+                  .collection(FirestoreConstants.USER)
+                  .document(currentUser.uid)
+                  .setData({
+                FirestoreConstants.JOINED_ON:
+                    DateTime.now().millisecondsSinceEpoch,
+                FirestoreConstants.IS_OWNER: true,
+                FirestoreConstants.USER_ID: currentUser.uid,
+              }).then((value) {
+                // add the group to the current user
                 Firestore.instance
+                    .collection(FirestoreConstants.USER)
+                    .document(currentUser.uid)
                     .collection(FirestoreConstants.GROUPS)
                     .document(groupName)
                     .setData({
@@ -54,53 +71,28 @@ class CreateGroupController extends GetxController {
                   FirestoreConstants.GROUP_DESCRIPTION: groupDescription,
                   FirestoreConstants.GROUP_SIZE: 100,
                   FirestoreConstants.CREATED_BY: currentUser.uid,
-                  FirestoreConstants.CREATED_ON:
-                      DateTime.now().millisecondsSinceEpoch,
+                  FirestoreConstants.IS_OWNER: true,
                   FirestoreConstants.GROUP_PROFILE_IMAGE:
-                      "https://image.flaticon.com/icons/png/512/16/16016.png",
+                      AppConstants.DEFAULT_GROUP_PROFILE_IMAGE,
                   FirestoreConstants.GROUP_BACKGROUND_IMAGE:
-                      "https://images.unsplash.com/photo-1506869640319-fe1a24fd76dc?ixlib=rb-1.2.1&auto=format&fit=crop&w=2550&q=80",
+                      AppConstants.DEFAULT_GROUP_PROFILE_BACKGROUND,
                 }).then((value) {
-                  // add the current user to the group
                   Firestore.instance
                       .collection(FirestoreConstants.GROUPS)
                       .document(groupName)
-                      .collection(FirestoreConstants.USER)
-                      .document(currentUser.uid)
+                      .collection(FirestoreConstants.MESSAGES)
+                      .document()
                       .setData({
-                    FirestoreConstants.JOINED_ON:
+                    FirestoreConstants.MESSAGE_ON:
                         DateTime.now().millisecondsSinceEpoch,
-                    FirestoreConstants.IS_OWNER: true,
-                    FirestoreConstants.USER_ID: currentUser.uid,
+                    FirestoreConstants.IS_CREATED_MESSAGE: true,
+                    FirestoreConstants.MESSAGE: "Group Created"
                   }).then((value) {
-                    // add the group to the current user
-                    Firestore.instance
-                        .collection(FirestoreConstants.USER)
-                        .document(currentUser.uid)
-                        .collection(FirestoreConstants.GROUPS)
-                        .document(groupName)
-                        .setData({
-                      FirestoreConstants.GROUP_NAME: groupName,
-                      FirestoreConstants.GROUP_DESCRIPTION: groupDescription,
-                      FirestoreConstants.GROUP_SIZE: 100,
-                      FirestoreConstants.CREATED_BY: currentUser.uid,
-                      FirestoreConstants.IS_OWNER: true,
-                      FirestoreConstants.GROUP_PROFILE_IMAGE:
-                      "https://image.flaticon.com/icons/png/512/16/16016.png",
-                      FirestoreConstants.GROUP_BACKGROUND_IMAGE:
-                      "https://images.unsplash.com/photo-1506869640319-fe1a24fd76dc?ixlib=rb-1.2.1&auto=format&fit=crop&w=2550&q=80",
-                    }).then((value) {
-                      updateLoading();
-                      Get.back(result: groupName);
-                    });
+                    updateLoading();
+                    Get.back(result: groupName);
                   });
                 });
-              }
-            }).catchError((error) {
-              Utility.showSnackBar(
-                "Not able to create group at the moment.",
-                Colors.red,
-              );
+              });
             });
           } else {
             updateLoading();

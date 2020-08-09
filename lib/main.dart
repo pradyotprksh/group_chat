@@ -61,7 +61,6 @@ class MyApp extends StatelessWidget {
         GetPage(
           name: GroupList.route_name,
           page: () => GroupList(),
-          fullscreenDialog: true,
           transition: Transition.rightToLeft,
         ),
       ],

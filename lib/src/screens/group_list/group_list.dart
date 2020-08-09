@@ -50,15 +50,25 @@ class GroupList extends StatelessWidget {
             return CenterCircularProgressBar();
           var snapshot = groupSnapshot.data.documents;
           if (snapshot != null) {
-            return ListView.builder(
-              padding: const EdgeInsets.only(
-                top: 15,
-              ),
-              itemCount: snapshot.length,
-              itemBuilder: (listContext, position) {
-                return SingleGroupDetail(snapshot[position]);
-              },
-            );
+            if (snapshot.length > 0) {
+              return ListView.builder(
+                padding: const EdgeInsets.only(
+                  top: 15,
+                ),
+                itemCount: snapshot.length,
+                itemBuilder: (listContext, position) {
+                  return SingleGroupDetail(snapshot[position]);
+                },
+              );
+            } else {
+              return CenterText(
+                (type == "0")
+                    ? "No Groups Created"
+                    : (type == "1")
+                        ? "No Groups Joined"
+                        : "No Invitation Pending",
+              );
+            }
           } else {
             return CenterText("Something Went Wrong while getting groups.");
           }

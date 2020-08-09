@@ -68,20 +68,6 @@ class GroupOptions extends StatelessWidget {
             Icons.keyboard_arrow_right,
           ),
         ),
-        ListTile(
-          onTap: () {},
-          title: Text(
-            "Configure Groups",
-            style: GoogleFonts.asap(),
-          ),
-          subtitle: Text(
-            "Configure basic group settings.",
-            style: GoogleFonts.asap(),
-          ),
-          trailing: Icon(
-            Icons.keyboard_arrow_right,
-          ),
-        ),
       ],
     );
   }

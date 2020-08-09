@@ -10,7 +10,6 @@ import 'package:group_chat/src/screens/create_group.dart';
 import 'package:group_chat/src/screens/home/profile/group_options.dart';
 import 'package:group_chat/src/screens/home/profile/other_options.dart';
 import 'package:group_chat/src/screens/home/profile/profile_group_details.dart';
-import 'package:group_chat/src/screens/home/profile/profile_options.dart';
 import 'package:group_chat/src/util/firestore_constants.dart';
 import 'package:group_chat/src/widget/center_circular_progressbar.dart';
 import 'package:group_chat/src/widget/center_text.dart';
@@ -138,8 +137,6 @@ class _ProfilePageState extends State<ProfilePage> {
                                     ProfileGroupDetails(groupOwner, groupJoined,
                                         currentUserSnapshot.data.uid),
                                     Divider(),
-                                    ProfileOptions(),
-                                    Divider(),
                                     GroupOptions(currentUserSnapshot.data.uid),
                                     Divider(),
                                     OtherOptions(),
@@ -149,7 +146,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                         Get.defaultDialog(
                                           title: "Logout",
                                           content: Text(
-                                            "Your sre you want to log out?",
+                                            "Sure you want to log out?",
                                             style: GoogleFonts.asap(),
                                           ),
                                           textConfirm: "Yes",
