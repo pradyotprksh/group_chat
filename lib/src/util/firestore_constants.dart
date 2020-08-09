@@ -13,7 +13,6 @@ class FirestoreConstants {
   static const CREATED_ON = "created_on";
   static const GROUP_PROFILE_IMAGE = "group_profile_image";
   static const GROUP_BACKGROUND_IMAGE = "group_background_image";
-  static const CURRENT_GROUP_SIZE = "current_group_size";
   static const JOINED_ON = "joined_on";
   static const IS_OWNER = "is_owner";
   static const GROUPS_INVITE = "groups_invite";

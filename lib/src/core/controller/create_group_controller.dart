@@ -54,7 +54,6 @@ class CreateGroupController extends GetxController {
                   FirestoreConstants.GROUP_DESCRIPTION: groupDescription,
                   FirestoreConstants.GROUP_SIZE: 100,
                   FirestoreConstants.CREATED_BY: currentUser.uid,
-                  FirestoreConstants.CURRENT_GROUP_SIZE: 1,
                   FirestoreConstants.CREATED_ON:
                       DateTime.now().millisecondsSinceEpoch,
                   FirestoreConstants.GROUP_PROFILE_IMAGE:
