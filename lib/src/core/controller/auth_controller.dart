@@ -65,4 +65,10 @@ class AuthController extends GetxController {
       updateLoading();
     });
   }
+
+  Future<void> logOut() async {
+    FirebaseAuth.instance.signOut().then((value) {
+      Get.offNamed("/");
+    });
+  }
 }

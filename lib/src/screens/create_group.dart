@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:group_chat/src/core/controller/create_group_controller.dart';
+import 'package:group_chat/src/widget/center_circular_progressbar.dart';
 
 class CreateGroup extends StatefulWidget {
   static const route_name = "create_group";
@@ -104,10 +105,7 @@ class _CreateGroupState extends State<CreateGroup> {
                   ),
                 ),
               ),
-              if (_.isLoading)
-                Center(
-                  child: CircularProgressIndicator(),
-                ),
+              if (_.isLoading) CenterCircularProgressBar(),
             ],
           );
         },

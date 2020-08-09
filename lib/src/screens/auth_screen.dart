@@ -3,14 +3,16 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:group_chat/src/core/controller/auth_controller.dart';
 import 'package:group_chat/src/util/string.dart';
+import 'package:group_chat/src/widget/center_circular_progressbar.dart';
 
 class AuthScreen extends StatelessWidget {
   static const route_name = 'auth_screen';
+  final AuthController authController = Get.put(AuthController());
 
   @override
   Widget build(BuildContext context) {
     return GetBuilder<AuthController>(
-      init: AuthController(),
+      init: authController,
       builder: (_) {
         return Scaffold(
           backgroundColor: Theme.of(context).backgroundColor,
@@ -82,9 +84,7 @@ class AuthScreen extends StatelessWidget {
                 ),
               ),
               if (_.isLoading)
-                const Center(
-                  child: CircularProgressIndicator(),
-                ),
+                CenterCircularProgressBar(),
             ],
           ),
         );
