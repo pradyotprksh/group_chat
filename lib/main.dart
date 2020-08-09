@@ -4,6 +4,7 @@ import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:get/route_manager.dart';
 import 'package:group_chat/src/screens/auth_screen.dart';
+import 'package:group_chat/src/screens/create_group.dart';
 import 'package:group_chat/src/screens/home/home_screen.dart';
 import 'package:group_chat/src/screens/splash_screen.dart';
 import 'package:group_chat/src/util/string.dart';
@@ -48,6 +49,12 @@ class MyApp extends StatelessWidget {
         GetPage(
           name: HomeScreen.route_name,
           page: () => HomeScreen(),
+          transition: Transition.rightToLeft,
+        ),
+        GetPage(
+          name: CreateGroup.route_name,
+          page: () => CreateGroup(),
+          fullscreenDialog: true,
           transition: Transition.rightToLeft,
         ),
       ],

@@ -10,6 +10,7 @@ class HomeScreen extends StatelessWidget {
   final pages = [
     Container(),
     Container(),
+    Container(),
     ProfilePage(),
   ];
 
@@ -46,6 +47,15 @@ class HomeScreen extends StatelessWidget {
                 ),
                 title: Text(
                   "Search",
+                  style: GoogleFonts.asap(),
+                ),
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(
+                  Icons.group,
+                ),
+                title: Text(
+                  "Groups",
                   style: GoogleFonts.asap(),
                 ),
               ),
