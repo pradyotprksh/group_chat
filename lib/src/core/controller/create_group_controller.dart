@@ -58,9 +58,9 @@ class CreateGroupController extends GetxController {
                   FirestoreConstants.CREATED_ON:
                       DateTime.now().millisecondsSinceEpoch,
                   FirestoreConstants.GROUP_PROFILE_IMAGE:
-                      "https://www.freepik.com/free-icon/multiple-users-silhouette_736514.htm#page=1&query=group&position=32",
+                      "https://image.flaticon.com/icons/png/512/16/16016.png",
                   FirestoreConstants.GROUP_BACKGROUND_IMAGE:
-                      "https://unsplash.com/photos/Sj0iMtq_Z4w",
+                      "https://images.unsplash.com/photo-1506869640319-fe1a24fd76dc?ixlib=rb-1.2.1&auto=format&fit=crop&w=2550&q=80",
                 }).then((value) {
                   // add the current user to the group
                   Firestore.instance
@@ -87,9 +87,9 @@ class CreateGroupController extends GetxController {
                       FirestoreConstants.CREATED_BY: currentUser.uid,
                       FirestoreConstants.IS_OWNER: true,
                       FirestoreConstants.GROUP_PROFILE_IMAGE:
-                          "https://www.freepik.com/free-icon/multiple-users-silhouette_736514.htm#page=1&query=group&position=32",
+                      "https://image.flaticon.com/icons/png/512/16/16016.png",
                       FirestoreConstants.GROUP_BACKGROUND_IMAGE:
-                          "https://unsplash.com/photos/Sj0iMtq_Z4w",
+                      "https://images.unsplash.com/photo-1506869640319-fe1a24fd76dc?ixlib=rb-1.2.1&auto=format&fit=crop&w=2550&q=80",
                     }).then((value) {
                       updateLoading();
                       Get.back(result: groupName);

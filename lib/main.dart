@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:get/route_manager.dart';
 import 'package:group_chat/src/screens/auth_screen.dart';
 import 'package:group_chat/src/screens/create_group.dart';
-import 'package:group_chat/src/screens/home/group_list.dart';
+import 'package:group_chat/src/screens/group_list/group_list.dart';
 import 'package:group_chat/src/screens/home/home_screen.dart';
 import 'package:group_chat/src/screens/splash_screen.dart';
 import 'package:group_chat/src/util/string.dart';

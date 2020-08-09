@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:group_chat/src/screens/home/group_list.dart';
+import 'package:group_chat/src/screens/group_list/group_list.dart';
 
 class ProfileGroupDetails extends StatelessWidget {
   final int groupOwner;

@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class AppConstants {
+  static RxInt groupOwner = 0.obs;
+  static RxInt groupJoined = 0.obs;
 
   static const Map<int, Color> primaryColor = {
     50: Color.fromRGBO(248, 186, 26, .1),

@@ -15,7 +15,12 @@ import 'package:group_chat/src/util/firestore_constants.dart';
 import 'package:group_chat/src/widget/center_circular_progressbar.dart';
 import 'package:group_chat/src/widget/center_text.dart';
 
-class ProfilePage extends StatelessWidget {
+class ProfilePage extends StatefulWidget {
+  @override
+  _ProfilePageState createState() => _ProfilePageState();
+}
+
+class _ProfilePageState extends State<ProfilePage> {
   final AuthController authController = Get.put(AuthController());
 
   @override
@@ -84,7 +89,7 @@ class ProfilePage extends StatelessWidget {
                                 Get.toNamed(CreateGroup.route_name).then(
                                   (value) {
                                     if (value != null) {
-                                      print(value);
+                                      setState(() {});
                                     }
                                   },
                                 );

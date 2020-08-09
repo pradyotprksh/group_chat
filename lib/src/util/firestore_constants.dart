@@ -16,4 +16,5 @@ class FirestoreConstants {
   static const CURRENT_GROUP_SIZE = "current_group_size";
   static const JOINED_ON = "joined_on";
   static const IS_OWNER = "is_owner";
+  static const GROUPS_INVITE = "groups_invite";
 }
