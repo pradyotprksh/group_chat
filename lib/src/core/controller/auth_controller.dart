@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:group_chat/src/screens/home/home_screen.dart';
-import 'package:group_chat/src/util/app_constants.dart';
 import 'package:group_chat/src/util/firestore_constants.dart';
 import 'package:group_chat/src/util/string.dart';
 import 'package:group_chat/src/util/utility.dart';
@@ -71,9 +70,11 @@ class AuthController extends GetxController {
           Get.offNamed(HomeScreen.route_name);
         } else {
           // add user to the group
-          Firestore.instance
+          DocumentReference documentReference = Firestore.instance
               .collection(FirestoreConstants.GROUPS)
-              .document(StringConstant.APP_NAME)
+              .document(StringConstant.APP_NAME);
+
+          documentReference
               .collection(FirestoreConstants.USER)
               .document(user.uid)
               .setData({
@@ -88,15 +89,10 @@ class AuthController extends GetxController {
                 .collection(FirestoreConstants.GROUPS)
                 .document(StringConstant.APP_NAME)
                 .setData({
-              FirestoreConstants.GROUP_NAME: StringConstant.APP_NAME,
-              FirestoreConstants.GROUP_DESCRIPTION:
-                  AppConstants.MAIN_GROUP_DESCRIPTION,
-              FirestoreConstants.CREATED_BY: AppConstants.MAIN_USER_UID,
               FirestoreConstants.IS_OWNER: false,
-              FirestoreConstants.GROUP_PROFILE_IMAGE:
-                  AppConstants.DEFAULT_GROUP_PROFILE_IMAGE,
-              FirestoreConstants.GROUP_BACKGROUND_IMAGE:
-                  AppConstants.DEFAULT_GROUP_PROFILE_BACKGROUND,
+              FirestoreConstants.GROUP_NAME: StringConstant.APP_NAME,
+              FirestoreConstants.GROUP_REFERENCE:
+              documentReference
             }).then((value) {
               // add a message for the group
               Firestore.instance
@@ -106,9 +102,15 @@ class AuthController extends GetxController {
                   .document()
                   .setData({
                 FirestoreConstants.MESSAGE_ON:
-                    DateTime.now().millisecondsSinceEpoch,
+                DateTime
+                    .now()
+                    .millisecondsSinceEpoch,
                 FirestoreConstants.IS_JOINED_MESSAGE: true,
-                FirestoreConstants.USER_NAME: user.displayName
+                FirestoreConstants.MESSAGE_BY: user.uid,
+                FirestoreConstants.MESSAGE: "${user
+                    .displayName} joined the group",
+                FirestoreConstants.USER_NAME: "${user.displayName}",
+                FirestoreConstants.USER_PROFILE_PIC: "${user.photoUrl}",
               }).then((value) {
                 updateLoading();
                 Get.offNamed(HomeScreen.route_name);

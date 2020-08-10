@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:in_app_review/in_app_review.dart';
 import 'package:package_info/package_info.dart';
 
 class OtherOptions extends StatelessWidget {
+  final InAppReview inAppReview = InAppReview.instance;
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
@@ -31,6 +34,24 @@ class OtherOptions extends StatelessWidget {
               ),
               subtitle: Text(
                 "Share Groupee with your friends.",
+                style: GoogleFonts.asap(),
+              ),
+              trailing: Icon(
+                Icons.keyboard_arrow_right,
+              ),
+            ),
+            ListTile(
+              onTap: () async {
+                if (await inAppReview.isAvailable()) {
+                  inAppReview.requestReview();
+                }
+              },
+              title: Text(
+                "Review",
+                style: GoogleFonts.asap(),
+              ),
+              subtitle: Text(
+                "Review Groupee Application.",
                 style: GoogleFonts.asap(),
               ),
               trailing: Icon(

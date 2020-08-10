@@ -21,4 +21,6 @@ class FirestoreConstants {
   static const MESSAGE_ON = "message_on";
   static const IS_CREATED_MESSAGE = "is_created_message";
   static const MESSAGE = "message";
+  static const GROUP_REFERENCE = "group_reference";
+  static const MESSAGE_BY = "message_by";
 }

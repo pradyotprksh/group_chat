@@ -33,10 +33,10 @@ class CreateGroupController extends GetxController {
         FirebaseAuth.instance.currentUser().then((currentUser) {
           if (currentUser != null) {
             // create group
-            Firestore.instance
+            DocumentReference documentReference = Firestore.instance
                 .collection(FirestoreConstants.GROUPS)
-                .document(groupName)
-                .setData({
+                .document(groupName);
+            documentReference.setData({
               FirestoreConstants.GROUP_NAME: groupName,
               FirestoreConstants.GROUP_DESCRIPTION: groupDescription,
               FirestoreConstants.GROUP_SIZE: 100,
@@ -67,15 +67,9 @@ class CreateGroupController extends GetxController {
                     .collection(FirestoreConstants.GROUPS)
                     .document(groupName)
                     .setData({
-                  FirestoreConstants.GROUP_NAME: groupName,
-                  FirestoreConstants.GROUP_DESCRIPTION: groupDescription,
-                  FirestoreConstants.GROUP_SIZE: 100,
-                  FirestoreConstants.CREATED_BY: currentUser.uid,
                   FirestoreConstants.IS_OWNER: true,
-                  FirestoreConstants.GROUP_PROFILE_IMAGE:
-                      AppConstants.DEFAULT_GROUP_PROFILE_IMAGE,
-                  FirestoreConstants.GROUP_BACKGROUND_IMAGE:
-                      AppConstants.DEFAULT_GROUP_PROFILE_BACKGROUND,
+                  FirestoreConstants.GROUP_REFERENCE:
+                  documentReference
                 }).then((value) {
                   Firestore.instance
                       .collection(FirestoreConstants.GROUPS)
@@ -84,9 +78,16 @@ class CreateGroupController extends GetxController {
                       .document()
                       .setData({
                     FirestoreConstants.MESSAGE_ON:
-                        DateTime.now().millisecondsSinceEpoch,
+                    DateTime
+                        .now()
+                        .millisecondsSinceEpoch,
                     FirestoreConstants.IS_CREATED_MESSAGE: true,
-                    FirestoreConstants.MESSAGE: "Group Created"
+                    FirestoreConstants.MESSAGE_BY: currentUser.uid,
+                    FirestoreConstants.MESSAGE: "${currentUser
+                        .displayName} created the group",
+                    FirestoreConstants.USER_NAME: "${currentUser.displayName}",
+                    FirestoreConstants.USER_PROFILE_PIC: "${currentUser
+                        .photoUrl}",
                   }).then((value) {
                     updateLoading();
                     Get.back(result: groupName);

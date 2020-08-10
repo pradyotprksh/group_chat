@@ -57,11 +57,11 @@ class GroupOptions extends StatelessWidget {
             Get.toNamed("${GroupList.route_name}?userId=$userId&type=2");
           },
           title: Text(
-            "Group invites",
+            "Group invites/requests",
             style: GoogleFonts.asap(),
           ),
           subtitle: Text(
-            "See list of groups invites.",
+            "See list of groups invites and requests.",
             style: GoogleFonts.asap(),
           ),
           trailing: Icon(

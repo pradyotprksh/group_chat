@@ -22,9 +22,18 @@ class GroupList extends StatelessWidget {
         title: Text(
           (type == "0")
               ? "Groups Owned"
-              : (type == "1") ? "Groups Joined" : "Groups Invite",
+              : (type == "1") ? "Groups Joined" : "Group invites/requests",
           style: GoogleFonts.asap(),
         ),
+        actions: [
+          if (type == "2")
+            IconButton(
+              onPressed: () {},
+              icon: Icon(
+                Icons.history,
+              ),
+            ),
+        ],
       ),
       body: StreamBuilder(
         stream: (type == "0")
@@ -57,7 +66,28 @@ class GroupList extends StatelessWidget {
                 ),
                 itemCount: snapshot.length,
                 itemBuilder: (listContext, position) {
-                  return SingleGroupDetail(snapshot[position]);
+                  return FutureBuilder(
+                    future: Firestore.instance
+                        .document(snapshot[position]
+                    [FirestoreConstants.GROUP_REFERENCE]
+                        .path)
+                        .get(),
+                    builder: (_, groupDetailsSnapshot) {
+                      if (groupDetailsSnapshot.connectionState ==
+                          ConnectionState.waiting) {
+                        return Padding(
+                          padding: const EdgeInsets.all(
+                            15.0,
+                          ),
+                          child: CenterText("Getting group details..."),
+                        );
+                      } else if (groupDetailsSnapshot.data == null) {
+                        return CenterText("Not able to get group details");
+                      } else {
+                        return SingleGroupDetail(groupDetailsSnapshot.data);
+                      }
+                    },
+                  );
                 },
               );
             } else {

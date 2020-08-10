@@ -1,5 +1,5 @@
 class AppConstants {
-  static const MAIN_USER_UID = "74NeqBt63fV2PwKO3rPGIGIchAX2";
+  static const MAIN_USER_UID = "p64aUoOsmNTPsRhFgPSBBheSlDV2";
   static const MAIN_GROUP_DESCRIPTION =
       "A place where all the groupee will meet together";
   static const DEFAULT_GROUP_PROFILE_IMAGE =

@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:get/route_manager.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:group_chat/src/screens/group_chat/group_chat_screen.dart';
 import 'package:group_chat/src/util/firestore_constants.dart';
 import 'package:group_chat/src/util/utility.dart';
 import 'package:group_chat/src/widget/center_circular_progressbar.dart';
@@ -75,7 +77,11 @@ class GroupDetailBottomSheet extends StatelessWidget {
                               Tooltip(
                                 message: "Go To Group",
                                 child: ListTile(
-                                  onTap: () {},
+                                  onTap: () {
+                                    Get.toNamed(GroupChatScreen.route_name,
+                                        arguments: snapshot[
+                                            FirestoreConstants.GROUP_NAME]);
+                                  },
                                   leading: CircleAvatar(
                                     backgroundColor: Colors.white,
                                     child: Container(

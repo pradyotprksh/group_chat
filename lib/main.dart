@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:get/route_manager.dart';
 import 'package:group_chat/src/screens/auth_screen.dart';
 import 'package:group_chat/src/screens/create_group.dart';
+import 'package:group_chat/src/screens/group_chat/group_chat_screen.dart';
 import 'package:group_chat/src/screens/group_list/group_list.dart';
 import 'package:group_chat/src/screens/home/home_screen.dart';
 import 'package:group_chat/src/screens/splash_screen.dart';
@@ -61,6 +62,11 @@ class MyApp extends StatelessWidget {
         GetPage(
           name: GroupList.route_name,
           page: () => GroupList(),
+          transition: Transition.rightToLeft,
+        ),
+        GetPage(
+          name: GroupChatScreen.route_name,
+          page: () => GroupChatScreen(),
           transition: Transition.rightToLeft,
         ),
       ],
