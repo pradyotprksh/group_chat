@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/route_manager.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:group_chat/src/screens/group_list/group_invites/group_invites_screen.dart';
 import 'package:group_chat/src/screens/group_list/group_list.dart';
 
 class GroupOptions extends StatelessWidget {
@@ -54,7 +55,7 @@ class GroupOptions extends StatelessWidget {
         ),
         ListTile(
           onTap: () {
-            Get.toNamed("${GroupList.route_name}?userId=$userId&type=2");
+            Get.toNamed("${GroupInvitesScreen.route_name}?userId=$userId");
           },
           title: Text(
             "Group invites/requests",

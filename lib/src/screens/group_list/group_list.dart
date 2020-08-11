@@ -20,40 +20,23 @@ class GroupList extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: Theme.of(context).backgroundColor,
         title: Text(
-          (type == "0")
-              ? "Groups Owned"
-              : (type == "1") ? "Groups Joined" : "Group invites/requests",
+          (type == "0") ? "Groups Owned" : "Groups Joined",
           style: GoogleFonts.asap(),
         ),
-        actions: [
-          if (type == "2")
-            IconButton(
-              onPressed: () {},
-              icon: Icon(
-                Icons.history,
-              ),
-            ),
-        ],
       ),
       body: StreamBuilder(
         stream: (type == "0")
             ? Firestore.instance
-                .collection(FirestoreConstants.USER)
-                .document(userId)
-                .collection(FirestoreConstants.GROUPS)
-                .where(FirestoreConstants.IS_OWNER, isEqualTo: true)
-                .snapshots()
-            : (type == "1")
-                ? Firestore.instance
-                    .collection(FirestoreConstants.USER)
-                    .document(userId)
-                    .collection(FirestoreConstants.GROUPS)
-                    .snapshots()
-                : Firestore.instance
-                    .collection(FirestoreConstants.USER)
-                    .document(userId)
-                    .collection(FirestoreConstants.GROUPS_INVITE)
-                    .snapshots(),
+            .collection(FirestoreConstants.USER)
+            .document(userId)
+            .collection(FirestoreConstants.GROUPS)
+            .where(FirestoreConstants.IS_OWNER, isEqualTo: true)
+            .snapshots()
+            : Firestore.instance
+            .collection(FirestoreConstants.USER)
+            .document(userId)
+            .collection(FirestoreConstants.GROUPS)
+            .snapshots(),
         builder: (_, groupSnapshot) {
           if (groupSnapshot.connectionState == ConnectionState.waiting)
             return CenterCircularProgressBar();
@@ -94,9 +77,7 @@ class GroupList extends StatelessWidget {
               return CenterText(
                 (type == "0")
                     ? "No Groups Created"
-                    : (type == "1")
-                        ? "No Groups Joined"
-                        : "No Invitation Pending",
+                    : "No Groups Joined",
               );
             }
           } else {
