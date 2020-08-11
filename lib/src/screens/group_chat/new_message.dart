@@ -67,13 +67,13 @@ class NewMessage extends StatelessWidget {
                     _sendMessage();
                   },
                 ),
-                prefixIcon: IconButton(
+                /*prefixIcon: IconButton(
                   color: Theme.of(context).accentColor,
                   icon: Icon(
                     Icons.attach_file,
                   ),
                   onPressed: () {},
-                ),
+                ),*/
               ),
               onChanged: (value) {
                 _enteredMessage = value;

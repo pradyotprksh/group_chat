@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:group_chat/src/core/controller/groups_controller.dart';
 import 'package:group_chat/src/core/controller/home_controller.dart';
 import 'package:group_chat/src/screens/home/all_group_lists.dart';
+import 'package:group_chat/src/screens/home/home_page.dart';
 import 'package:group_chat/src/screens/home/profile/profile_page.dart';
 import 'package:group_chat/src/screens/home/search_page.dart';
 
@@ -13,7 +14,7 @@ class HomeScreen extends StatelessWidget {
   final HomeController _homeController = Get.put(HomeController());
   final GroupController _groupController = Get.put(GroupController());
   final pages = [
-    Container(),
+    HomePage(),
     SearchPage(),
     AllGroupLists(),
     ProfilePage(),

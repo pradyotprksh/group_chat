@@ -26,6 +26,7 @@ class SingleGroupDetail extends StatelessWidget {
       height: 150,
       child: GestureDetector(
         onTap: () async {
+          FocusScope.of(context).unfocus();
           Utility.showLoadingDialog("Opening Please Wait...");
           var isAllowed = await _groupController
               .isUserJoinedTheGroup(snapshot[FirestoreConstants.GROUP_NAME]);

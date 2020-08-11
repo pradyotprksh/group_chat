@@ -24,6 +24,7 @@ class MyApp extends StatelessWidget {
     FirebaseAnalytics analytics = FirebaseAnalytics();
 
     return GetMaterialApp(
+      debugShowCheckedModeBanner: false,
       title: StringConstant.APP_NAME,
       darkTheme: ThemeData(
         brightness: Brightness.dark,
