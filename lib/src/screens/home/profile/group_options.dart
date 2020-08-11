@@ -55,7 +55,7 @@ class GroupOptions extends StatelessWidget {
         ),
         ListTile(
           onTap: () {
-            Get.toNamed("${GroupInvitesScreen.route_name}?userId=$userId");
+            Get.toNamed(GroupInvitesScreen.route_name);
           },
           title: Text(
             "Group invites/requests",

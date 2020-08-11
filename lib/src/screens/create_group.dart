@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:group_chat/src/core/controller/create_group_controller.dart';
+import 'package:group_chat/src/core/controller/groups_controller.dart';
 import 'package:group_chat/src/widget/center_circular_progressbar.dart';
 
 class CreateGroup extends StatefulWidget {
@@ -14,8 +14,7 @@ class CreateGroup extends StatefulWidget {
 class _CreateGroupState extends State<CreateGroup> {
   var _groupDescriptionNode = FocusNode();
   final _form = GlobalKey<FormState>();
-  final CreateGroupController _createGroupController =
-      Get.put(CreateGroupController());
+  final GroupController _createGroupController = Get.put(GroupController());
   var _groupName;
   var _groupDescription;
 
@@ -39,7 +38,7 @@ class _CreateGroupState extends State<CreateGroup> {
           style: GoogleFonts.asap(),
         ),
       ),
-      body: GetBuilder<CreateGroupController>(
+      body: GetBuilder<GroupController>(
         init: _createGroupController,
         builder: (_) {
           return Stack(

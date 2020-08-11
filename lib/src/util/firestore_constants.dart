@@ -26,4 +26,7 @@ class FirestoreConstants {
   static const GROUP_INVITE_TO = "group_invite_to";
   static const GROUP_INVITE_BY = "group_invite_by";
   static const INVITE_ON = "invite_on";
+  static const GROUP_INVITE_ACCEPTED = "group_invite_accepted";
+  static const INVITE_ID = "invite_id";
+  static const IS_REJECTED = "is_rejected";
 }
