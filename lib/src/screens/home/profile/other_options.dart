@@ -62,6 +62,11 @@ class OtherOptions extends StatelessWidget {
               onTap: () {
                 showAboutDialog(
                   context: context,
+                  applicationIcon: Image.asset(
+                    "assets/ic_launcher.png",
+                    height: 50,
+                    width: 50,
+                  ),
                   applicationVersion: packageSnapshot.data.version,
                   applicationLegalese: 'Welcome to our Groupee.',
                 );

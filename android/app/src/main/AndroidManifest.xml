@@ -9,7 +9,7 @@
 
     <application
         android:name="io.flutter.app.FlutterApplication"
-        android:label="group_chat"
+        android:label="Groupee"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"
