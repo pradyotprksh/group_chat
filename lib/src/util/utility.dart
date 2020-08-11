@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
 class Utility {
@@ -12,6 +13,23 @@ class Utility {
         15.0,
       ),
       borderRadius: 15.0,
+    );
+  }
+
+  static showLoadingDialog(message) {
+    Get.defaultDialog(
+      content: Column(
+        children: [
+          LinearProgressIndicator(),
+          SizedBox(
+            height: 15,
+          ),
+          Text(
+            message,
+            style: GoogleFonts.asap(),
+          ),
+        ],
+      ),
     );
   }
 

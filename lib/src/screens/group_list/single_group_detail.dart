@@ -6,6 +6,7 @@ import 'package:group_chat/src/core/controller/groups_controller.dart';
 import 'package:group_chat/src/screens/group_chat/group_chat_screen.dart';
 import 'package:group_chat/src/screens/group_detail_bottom_sheet/group_detail_bottom_sheet.dart';
 import 'package:group_chat/src/util/firestore_constants.dart';
+import 'package:group_chat/src/util/utility.dart';
 
 class SingleGroupDetail extends StatelessWidget {
   final GroupController _groupController = Get.find();
@@ -24,12 +25,22 @@ class SingleGroupDetail extends StatelessWidget {
       ),
       height: 150,
       child: GestureDetector(
-        onTap: () {
-          if (_groupController
-              .isUserJoinedTheGroup(snapshot[FirestoreConstants.GROUP_NAME])) {
+        onTap: () async {
+          Utility.showLoadingDialog("Opening Please Wait...");
+          var isAllowed = await _groupController
+              .isUserJoinedTheGroup(snapshot[FirestoreConstants.GROUP_NAME]);
+          if (isAllowed) {
+            Get.back();
             Get.toNamed(GroupChatScreen.route_name,
                 arguments: snapshot[FirestoreConstants.GROUP_NAME]);
-          } else {}
+          } else {
+            Get.back();
+            Get.bottomSheet(GroupDetailBottomSheet(
+                snapshot[FirestoreConstants.GROUP_NAME]));
+            Utility.showSnackBar(
+                "You are not a member of this group. To chat in this group please send a request first",
+                Colors.red);
+          }
         },
         child: ClipRRect(
           borderRadius: BorderRadius.circular(15),

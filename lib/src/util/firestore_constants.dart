@@ -23,4 +23,7 @@ class FirestoreConstants {
   static const MESSAGE = "message";
   static const GROUP_REFERENCE = "group_reference";
   static const MESSAGE_BY = "message_by";
+  static const GROUP_INVITE_TO = "group_invite_to";
+  static const GROUP_INVITE_BY = "group_invite_by";
+  static const INVITE_ON = "invite_on";
 }
