@@ -2,11 +2,14 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:group_chat/src/core/controller/groups_controller.dart';
 import 'package:group_chat/src/screens/group_chat/group_chat_screen.dart';
 import 'package:group_chat/src/screens/group_detail_bottom_sheet/group_detail_bottom_sheet.dart';
 import 'package:group_chat/src/util/firestore_constants.dart';
 
 class SingleGroupDetail extends StatelessWidget {
+  final GroupController _groupController = Get.find();
+
   final DocumentSnapshot snapshot;
 
   SingleGroupDetail(this.snapshot);
@@ -22,8 +25,11 @@ class SingleGroupDetail extends StatelessWidget {
       height: 150,
       child: GestureDetector(
         onTap: () {
-          Get.toNamed(GroupChatScreen.route_name,
-              arguments: snapshot[FirestoreConstants.GROUP_NAME]);
+          if (_groupController
+              .isUserJoinedTheGroup(snapshot[FirestoreConstants.GROUP_NAME])) {
+            Get.toNamed(GroupChatScreen.route_name,
+                arguments: snapshot[FirestoreConstants.GROUP_NAME]);
+          } else {}
         },
         child: ClipRRect(
           borderRadius: BorderRadius.circular(15),
