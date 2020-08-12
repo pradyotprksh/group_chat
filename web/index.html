@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta content="IE=Edge" http-equiv="X-UA-Compatible">
+    <meta content="A new Flutter application." name="description">
+
+    <!-- iOS meta tags & icons -->
+    <meta content="yes" name="apple-mobile-web-app-capable">
+    <meta content="black" name="apple-mobile-web-app-status-bar-style">
+    <meta content="flutter_social" name="apple-mobile-web-app-title">
+    <link href="icons/Icon-192.png" rel="apple-touch-icon">
+
+    <!-- Favicon -->
+    <link href="favicon.png" rel="shortcut icon" type="image/png"/>
+
+    <title>Groupee</title>
+    <link href="manifest.json" rel="manifest">
+
+    <meta content="761688015932-bnurc8d5jidju0jb9h0gaosh42pjjob5.apps.googleusercontent.com"
+          name="google-signin-client_id">
+</head>
+<body>
+<script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', function () {
+        navigator.serviceWorker.register('flutter_service_worker.js');
+      });
+    }
+
+
+
+</script>
+<script src="https://www.gstatic.com/firebasejs/init.js"></script>
+<script src="https://www.gstatic.com/firebasejs/7.17.2/firebase.js"></script>
+<script src="https://www.gstatic.com/firebasejs/7.17.2/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/7.17.2/firebase-analytics.js"></script>
+<script src="https://www.gstatic.com/firebasejs/7.17.2/firebase-firestore.js"></script>
+<script src="https://www.gstatic.com/firebasejs/7.17.2/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/7.17.2/firebase-storage.js"></script>
+<script src="https://www.gstatic.com/firebasejs/7.17.2/firebase-performance.js"></script>
+
+<script>
+    var firebaseConfig = {
+      apiKey: "AIzaSyCiabfUsDYBs3c9M9xig76mWTAAXjjzq3A",
+      authDomain: "group-chat-d86ec.firebaseapp.com",
+      databaseURL: "https://group-chat-d86ec.firebaseio.com",
+      projectId: "group-chat-d86ec",
+      storageBucket: "group-chat-d86ec.appspot.com",
+      messagingSenderId: "761688015932",
+      appId: "1:761688015932:web:12f28182a05eafda172f39",
+      measurementId: "G-Z4N4BGTPR9"
+    };
+    firebase.initializeApp(firebaseConfig);
+    firebase.analytics();
+
+</script>
+
+<script src="main.dart.js" type="application/javascript"></script>
+</body>
+</html>
