@@ -44,9 +44,19 @@ dependencies:
 
   in_app_review: ^0.2.0+2
 
+  flutter_share: ^1.0.2+1
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
+
+  flutter_launcher_icons: ^0.7.5
+
+flutter_icons:
+  android: "ic_launcher"
+  ios: true
+  image_path: "assets/ic_launcher.png"
+  adaptive_icon_background: #000000
 
 flutter:
 

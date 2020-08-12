@@ -26,7 +26,7 @@ class HomePage extends StatelessWidget {
           StringConstant.APP_NAME,
           style: GoogleFonts.lemonada(
             fontSize: 30,
-            color: Theme.of(context).accentColor,
+            color: Colors.white,
           ),
         ),
       ),

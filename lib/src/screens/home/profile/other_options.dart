@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_share/flutter_share.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:group_chat/src/util/string.dart';
 import 'package:in_app_review/in_app_review.dart';
 import 'package:package_info/package_info.dart';
 
@@ -27,7 +29,15 @@ class OtherOptions extends StatelessWidget {
               ),
             ),
             ListTile(
-              onTap: () {},
+              onTap: () {
+                FlutterShare.share(
+                  title: StringConstant.APP_NAME,
+                  text:
+                      "Hey Friend, checkout this group chat application. Simple and easy to use.",
+                  linkUrl:
+                      "https://play.google.com/store/apps/details?id=com.project.pradyotprakash.group_chat",
+                );
+              },
               title: Text(
                 "Share",
                 style: GoogleFonts.asap(),
@@ -68,7 +78,7 @@ class OtherOptions extends StatelessWidget {
                     width: 50,
                   ),
                   applicationVersion: packageSnapshot.data.version,
-                  applicationLegalese: 'Welcome to our Groupee.',
+                  applicationLegalese: 'A place where all the groups will meet together.',
                 );
               },
               title: Text(
