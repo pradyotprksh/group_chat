@@ -1,3 +1,5 @@
+import 'dart:io' show Platform;
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
@@ -86,7 +88,7 @@ class _ProfilePageState extends State<ProfilePage> {
                             child: FloatingActionButton(
                               onPressed: () {
                                 Get.toNamed(CreateGroup.route_name).then(
-                                  (value) {
+                                      (value) {
                                     if (value != null) {
                                       setState(() {});
                                     }
@@ -139,7 +141,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                     Divider(),
                                     GroupOptions(currentUserSnapshot.data.uid),
                                     Divider(),
-                                    OtherOptions(),
+                                    if (Platform.isAndroid) OtherOptions(),
                                     Divider(),
                                     ListTile(
                                       onTap: () {
