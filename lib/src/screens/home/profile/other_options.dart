@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_share/flutter_share.dart';
 import 'package:get/get.dart';
@@ -9,6 +10,10 @@ import 'package:package_info/package_info.dart';
 
 class OtherOptions extends StatelessWidget {
   final InAppReview inAppReview = InAppReview.instance;
+
+  final DocumentSnapshot userDataSnapshot;
+
+  OtherOptions(this.userDataSnapshot);
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +37,8 @@ class OtherOptions extends StatelessWidget {
             ),
             ListTile(
               onTap: () {
-                Get.toNamed(RazorPayScreen.route_name);
+                Get.toNamed(RazorPayScreen.route_name,
+                    arguments: userDataSnapshot);
               },
               title: Text(
                 'Donate',
@@ -51,9 +57,9 @@ class OtherOptions extends StatelessWidget {
                 FlutterShare.share(
                   title: StringConstant.APP_NAME,
                   text:
-                      "Hey Friend, checkout this group chat application. Simple and easy to use.",
+                  "Hey Friend, checkout this group chat application. Simple and easy to use.",
                   linkUrl:
-                      "https://play.google.com/store/apps/details?id=com.project.pradyotprakash.group_chat",
+                  "https://play.google.com/store/apps/details?id=com.project.pradyotprakash.group_chat",
                 );
               },
               title: Text(
@@ -98,7 +104,7 @@ class OtherOptions extends StatelessWidget {
                   applicationName: StringConstant.APP_NAME,
                   applicationVersion: packageSnapshot.data.version,
                   applicationLegalese:
-                      'A place where all the groups will meet together.',
+                  'A place where all the groups will meet together.',
                 );
               },
               title: Text(

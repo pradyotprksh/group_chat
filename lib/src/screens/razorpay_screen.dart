@@ -13,6 +13,7 @@ class RazorPayScreen extends StatefulWidget {
 
 class _RazorPayScreenState extends State<RazorPayScreen> {
   Razorpay _razorPay;
+  var _currentSelected = 0;
 
   void _handlePaymentSuccess(PaymentSuccessResponse response) {
     // Do something when payment succeeds
@@ -41,6 +42,17 @@ class _RazorPayScreenState extends State<RazorPayScreen> {
     _razorPay.clear();
   }
 
+  void _setupRazorPayOptions() {
+    var options = {
+      'key': AppConstants.RAZOR_PAY_TEST_ID,
+      'amount': 100,
+      'name': StringConstant.APP_NAME,
+      'description': 'Donating',
+      'prefill': {'email': 'test@razorpay.com'}
+    };
+    _razorPay.open(options);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -52,19 +64,71 @@ class _RazorPayScreenState extends State<RazorPayScreen> {
           style: GoogleFonts.asap(),
         ),
       ),
-      body: Center(
-        child: RaisedButton(
-          onPressed: () {
-            var options = {
-              'key': AppConstants.RAZOR_PAY_TEST_ID,
-              'amount': 100,
-              'name': StringConstant.APP_NAME,
-              'description': 'Donating',
-              'prefill': {'contact': '8888888888', 'email': 'test@razorpay.com'}
-            };
-            _razorPay.open(options);
-          },
-          child: Text('Pay Test'),
+      body: Padding(
+        padding: const EdgeInsets.all(
+          15.0,
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Text(
+              "Select Amount",
+              textAlign: TextAlign.start,
+              style: GoogleFonts.asap(
+                fontSize: 20.0,
+              ),
+            ),
+            const SizedBox(
+              height: 15.0,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                FlatButton(
+                  onPressed: () {
+                    setState(() {
+                      _currentSelected = 0;
+                    });
+                  },
+                  color: _currentSelected == 0 ? Colors.red : null,
+                  child: Text(
+                    "10",
+                    style: GoogleFonts.asap(
+                      fontSize: 16,
+                    ),
+                  ),
+                ),
+                FlatButton(
+                  onPressed: () {
+                    setState(() {
+                      _currentSelected = 1;
+                    });
+                  },
+                  color: _currentSelected == 1 ? Colors.red : null,
+                  child: Text(
+                    "50",
+                    style: GoogleFonts.asap(
+                      fontSize: 16,
+                    ),
+                  ),
+                ),
+                FlatButton(
+                  onPressed: () {
+                    setState(() {
+                      _currentSelected = 2;
+                    });
+                  },
+                  color: _currentSelected == 2 ? Colors.red : null,
+                  child: Text(
+                    "100",
+                    style: GoogleFonts.asap(
+                      fontSize: 16,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
         ),
       ),
     );

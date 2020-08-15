@@ -70,7 +70,15 @@ class _CreateGroupState extends State<CreateGroup> {
                           contentPadding: const EdgeInsets.all(
                             15,
                           ),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(
+                              25.0,
+                            ),
+                          ),
                         ),
+                      ),
+                      const SizedBox(
+                        height: 15,
                       ),
                       TextFormField(
                         focusNode: _groupDescriptionNode,
@@ -86,6 +94,11 @@ class _CreateGroupState extends State<CreateGroup> {
                           labelText: "Group Description",
                           contentPadding: const EdgeInsets.all(
                             15,
+                          ),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(
+                              25.0,
+                            ),
                           ),
                         ),
                       ),

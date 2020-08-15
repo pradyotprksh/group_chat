@@ -43,8 +43,7 @@ class _ProfilePageState extends State<ProfilePage> {
             builder: (_, userDataSnapshot) {
               if (userDataSnapshot.connectionState == ConnectionState.waiting) {
                 return CenterCircularProgressBar();
-              }
-              if (userDataSnapshot.data == null) {
+              } else if (userDataSnapshot.data == null) {
                 return CenterText(
                     "Something Went Wrong while getting user data.");
               } else {
@@ -141,7 +140,8 @@ class _ProfilePageState extends State<ProfilePage> {
                                     Divider(),
                                     GroupOptions(currentUserSnapshot.data.uid),
                                     Divider(),
-                                    if (Platform.isAndroid) OtherOptions(),
+                                    if (Platform.isAndroid)
+                                      OtherOptions(userData),
                                     Divider(),
                                     ListTile(
                                       onTap: () {
