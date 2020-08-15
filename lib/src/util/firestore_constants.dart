@@ -29,4 +29,13 @@ class FirestoreConstants {
   static const GROUP_INVITE_ACCEPTED = "group_invite_accepted";
   static const INVITE_ID = "invite_id";
   static const IS_REJECTED = "is_rejected";
+  static const DONATIONS = "donations";
+  static const PAYMENT_ID = "payment_id";
+  static const REFUNDS = "refunds";
+  static const PAYMENT_ON = "payment_on";
+  static const PAYMENT_SUCCESS = "payment_success";
+  static const PAYMENT_AMOUNT = "payment_amount";
+  static const PAYMENT_ERROR = "payment_error";
+  static const REFUND_ON = "refund_on";
+  static const REFUND_BY = "refund_by";
 }

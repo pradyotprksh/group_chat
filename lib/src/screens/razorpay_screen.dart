@@ -1,7 +1,12 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:group_chat/src/screens/donations_bottom_sheet.dart';
 import 'package:group_chat/src/util/app_constants.dart';
+import 'package:group_chat/src/util/firestore_constants.dart';
 import 'package:group_chat/src/util/string.dart';
+import 'package:group_chat/src/util/utility.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 
 class RazorPayScreen extends StatefulWidget {
@@ -13,27 +18,54 @@ class RazorPayScreen extends StatefulWidget {
 
 class _RazorPayScreenState extends State<RazorPayScreen> {
   Razorpay _razorPay;
-  var _currentSelected = 0;
+  var _currentSelected = -1;
+  var _currentDonateValue = 10;
+  final _controller = TextEditingController();
+  var _userId = "";
 
-  void _handlePaymentSuccess(PaymentSuccessResponse response) {
-    // Do something when payment succeeds
+  void _handlePaymentSuccess(PaymentSuccessResponse response) async {
+    Get.back();
+    Utility.showLoadingDialog("Confirming Payment...");
+    await Firestore.instance
+        .collection(FirestoreConstants.USER)
+        .document(_userId)
+        .collection(FirestoreConstants.DONATIONS)
+        .document(response.paymentId)
+        .setData({
+      FirestoreConstants.PAYMENT_ID: response.paymentId,
+      FirestoreConstants.PAYMENT_ON: DateTime.now().millisecondsSinceEpoch,
+      FirestoreConstants.PAYMENT_SUCCESS: true,
+      FirestoreConstants.PAYMENT_AMOUNT: _currentDonateValue,
+    });
+    Get.back();
+    Get.back(result: true);
   }
 
-  void _handlePaymentError(PaymentFailureResponse response) {
-    print(response.message);
-  }
-
-  void _handleExternalWallet(ExternalWalletResponse response) {
-    // Do something when an external wallet was selected
+  void _handlePaymentError(PaymentFailureResponse response) async {
+    Get.back();
+    await Firestore.instance
+        .collection(FirestoreConstants.USER)
+        .document(_userId)
+        .collection(FirestoreConstants.DONATIONS)
+        .document()
+        .setData({
+      FirestoreConstants.PAYMENT_ID: "",
+      FirestoreConstants.PAYMENT_ON: DateTime.now().millisecondsSinceEpoch,
+      FirestoreConstants.PAYMENT_SUCCESS: false,
+      FirestoreConstants.PAYMENT_AMOUNT: _currentDonateValue,
+      FirestoreConstants.PAYMENT_ERROR: response.message,
+    });
+    Utility.showSnackBar(response.message, Colors.red);
   }
 
   @override
   void initState() {
     super.initState();
+    DocumentSnapshot userSnapshot = Get.arguments;
+    _userId = userSnapshot[FirestoreConstants.USER_ID];
     _razorPay = Razorpay();
     _razorPay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSuccess);
     _razorPay.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentError);
-    _razorPay.on(Razorpay.EVENT_EXTERNAL_WALLET, _handleExternalWallet);
   }
 
   @override
@@ -43,12 +75,12 @@ class _RazorPayScreenState extends State<RazorPayScreen> {
   }
 
   void _setupRazorPayOptions() {
+    Utility.showLoadingDialog("Waiting for Razor pay...");
     var options = {
-      'key': AppConstants.RAZOR_PAY_TEST_ID,
-      'amount': 100,
+      'key': AppConstants.RAZOR_PAY_LIVE_ID,
+      'amount': _currentDonateValue * 100,
       'name': StringConstant.APP_NAME,
       'description': 'Donating',
-      'prefill': {'email': 'test@razorpay.com'}
     };
     _razorPay.open(options);
   }
@@ -58,11 +90,23 @@ class _RazorPayScreenState extends State<RazorPayScreen> {
     return Scaffold(
       backgroundColor: Theme.of(context).backgroundColor,
       appBar: AppBar(
-        backgroundColor: Theme.of(context).backgroundColor,
+        backgroundColor: Theme
+            .of(context)
+            .backgroundColor,
         title: Text(
           "Donate",
           style: GoogleFonts.asap(),
         ),
+        actions: [
+          IconButton(
+            onPressed: () {
+              Get.bottomSheet(DonationsBottomSheet(_userId));
+            },
+            icon: Icon(
+              Icons.history,
+            ),
+          ),
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(
@@ -86,6 +130,7 @@ class _RazorPayScreenState extends State<RazorPayScreen> {
               children: [
                 FlatButton(
                   onPressed: () {
+                    _currentDonateValue = 10;
                     setState(() {
                       _currentSelected = 0;
                     });
@@ -100,6 +145,7 @@ class _RazorPayScreenState extends State<RazorPayScreen> {
                 ),
                 FlatButton(
                   onPressed: () {
+                    _currentDonateValue = 50;
                     setState(() {
                       _currentSelected = 1;
                     });
@@ -114,6 +160,7 @@ class _RazorPayScreenState extends State<RazorPayScreen> {
                 ),
                 FlatButton(
                   onPressed: () {
+                    _currentDonateValue = 100;
                     setState(() {
                       _currentSelected = 2;
                     });
@@ -127,6 +174,71 @@ class _RazorPayScreenState extends State<RazorPayScreen> {
                   ),
                 ),
               ],
+            ),
+            const SizedBox(
+              height: 15.0,
+            ),
+            TextField(
+              autofocus: true,
+              textCapitalization: TextCapitalization.sentences,
+              autocorrect: true,
+              enableSuggestions: true,
+              keyboardType: TextInputType.number,
+              controller: _controller,
+              style: Theme
+                  .of(context)
+                  .textTheme
+                  .bodyText1,
+              decoration: InputDecoration(
+                labelText: 'Enter Amount...',
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(
+                    25.0,
+                  ),
+                ),
+                suffixIcon: IconButton(
+                  color: Theme
+                      .of(context)
+                      .accentColor,
+                  icon: Icon(
+                    Icons.clear,
+                  ),
+                  onPressed: () {
+                    _controller.clear();
+                    _currentDonateValue = 0;
+                    setState(() {});
+                  },
+                ),
+              ),
+              onChanged: (value) {
+                _currentDonateValue = int.tryParse(value);
+                setState(() {});
+              },
+              onSubmitted: (value) {
+                _currentDonateValue = int.tryParse(value);
+                setState(() {});
+              },
+            ),
+            const SizedBox(
+              height: 100,
+            ),
+            RaisedButton(
+              onPressed: _setupRazorPayOptions,
+              child: Text(
+                'Donate',
+                style: GoogleFonts.asap(
+                  fontSize: 20,
+                ),
+              ),
+            ),
+            const SizedBox(
+              height: 20,
+            ),
+            Text(
+              '*Please enter your phone number and email id in the next step. We don\'t save your details so you need to add it manually.',
+              style: GoogleFonts.asap(
+                fontStyle: FontStyle.italic,
+              ),
             ),
           ],
         ),

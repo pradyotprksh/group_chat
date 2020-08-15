@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:group_chat/src/screens/razorpay_screen.dart';
 import 'package:group_chat/src/util/string.dart';
+import 'package:group_chat/src/util/utility.dart';
 import 'package:in_app_review/in_app_review.dart';
 import 'package:package_info/package_info.dart';
 
@@ -38,7 +39,14 @@ class OtherOptions extends StatelessWidget {
             ListTile(
               onTap: () {
                 Get.toNamed(RazorPayScreen.route_name,
-                    arguments: userDataSnapshot);
+                        arguments: userDataSnapshot)
+                    .then((value) {
+                  if (value != null && value) {
+                    Utility.showSnackBar(
+                        "Thank you for your help. Really Accept it.",
+                        Colors.green);
+                  }
+                });
               },
               title: Text(
                 'Donate',
