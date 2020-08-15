@@ -24,6 +24,7 @@ class AuthController extends GetxController {
     _handleSignIn().then((FirebaseUser user) {
       setUserData(user);
     }).catchError((e) {
+      print(e.toString());
       Utility.showSnackBar(
         "Not able to sign in with your selected google account. Please try again.",
         Colors.red,

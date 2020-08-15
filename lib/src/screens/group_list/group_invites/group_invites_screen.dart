@@ -34,7 +34,7 @@ class _GroupInvitesScreenState extends State<GroupInvitesScreen> {
       appBar: AppBar(
         backgroundColor: Theme.of(context).backgroundColor,
         title: Text(
-          "Groups Joined",
+          "Groups Invites/Request",
           style: GoogleFonts.asap(),
         ),
         actions: [

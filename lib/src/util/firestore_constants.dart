@@ -39,4 +39,5 @@ class FirestoreConstants {
   static const REFUND_ON = "refund_on";
   static const REFUND_BY = "refund_by";
   static const IS_PICTURE_MESSAGE = "is_picture_message";
+  static const IMAGE_PATH = "image_path";
 }

@@ -9,6 +9,7 @@ import 'package:group_chat/src/screens/group_chat/group_chat_screen.dart';
 import 'package:group_chat/src/screens/group_list/group_invites/group_invites_screen.dart';
 import 'package:group_chat/src/screens/group_list/group_list.dart';
 import 'package:group_chat/src/screens/home/home_screen.dart';
+import 'package:group_chat/src/screens/image_preview_screen.dart';
 import 'package:group_chat/src/screens/razorpay_screen.dart';
 import 'package:group_chat/src/screens/splash_screen.dart';
 import 'package:group_chat/src/util/string.dart';
@@ -75,6 +76,12 @@ class MyApp extends StatelessWidget {
         GetPage(
           name: RazorPayScreen.route_name,
           page: () => RazorPayScreen(),
+          fullscreenDialog: true,
+          transition: Transition.rightToLeft,
+        ),
+        GetPage(
+          name: ImagePreviewScreen.route_name,
+          page: () => ImagePreviewScreen(),
           fullscreenDialog: true,
           transition: Transition.rightToLeft,
         ),

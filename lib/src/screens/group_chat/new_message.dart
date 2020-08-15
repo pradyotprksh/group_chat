@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:group_chat/src/util/firestore_constants.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:random_string/random_string.dart';
@@ -25,28 +26,49 @@ class NewMessage extends StatelessWidget {
         source: ImageSource.camera,
         imageQuality: 40,
       );
-      final file = File(pickedFile.path);
-      var randomNumber = randomBetween(10, 40);
-      var fileName = randomAlphaNumeric(randomNumber);
-      StorageReference storageReference = FirebaseStorage.instance
-          .ref()
-          .child("group_image/$groupName/${user.uid}/$fileName");
-      final StorageUploadTask uploadTask = storageReference.putFile(file);
-      final StorageTaskSnapshot downloadUrl = (await uploadTask.onComplete);
-      final String url = (await downloadUrl.ref.getDownloadURL());
-      await Firestore.instance
-          .collection(FirestoreConstants.GROUPS)
-          .document(groupName)
-          .collection(FirestoreConstants.MESSAGES)
-          .document()
-          .setData({
-        FirestoreConstants.MESSAGE_ON: DateTime.now().millisecondsSinceEpoch,
-        FirestoreConstants.MESSAGE_BY: user.uid,
-        FirestoreConstants.IS_PICTURE_MESSAGE: true,
-        FirestoreConstants.USER_NAME: "${user.displayName}",
-        FirestoreConstants.USER_PROFILE_PIC: "${user.photoUrl}",
-      });
-      print(url);
+      if (pickedFile != null) {
+        final file = File(pickedFile.path);
+        if (file != null) {
+          Get.rawSnackbar(
+            message: "Sending Image",
+            dismissDirection: SnackDismissDirection.VERTICAL,
+            snackPosition: SnackPosition.TOP,
+            margin: EdgeInsets.all(
+              15.0,
+            ),
+            borderRadius: 15.0,
+            isDismissible: false,
+            duration: Duration(days: 1),
+          );
+          var randomNumber = randomBetween(
+            10,
+            40,
+          );
+          var fileName = randomAlphaNumeric(randomNumber);
+          StorageReference storageReference = FirebaseStorage.instance
+              .ref()
+              .child("group_images/$groupName/${user.uid}/$fileName");
+          final StorageUploadTask uploadTask = storageReference.putFile(file);
+          final StorageTaskSnapshot downloadUrl = (await uploadTask.onComplete);
+          final String url = (await downloadUrl.ref.getDownloadURL());
+          await Firestore.instance
+              .collection(FirestoreConstants.GROUPS)
+              .document(groupName)
+              .collection(FirestoreConstants.MESSAGES)
+              .document()
+              .setData({
+            FirestoreConstants.MESSAGE_ON:
+                DateTime.now().millisecondsSinceEpoch,
+            FirestoreConstants.MESSAGE_BY: user.uid,
+            FirestoreConstants.MESSAGE: url,
+            FirestoreConstants.IS_PICTURE_MESSAGE: true,
+            FirestoreConstants.USER_NAME: "${user.displayName}",
+            FirestoreConstants.USER_PROFILE_PIC: "${user.photoUrl}",
+            FirestoreConstants.IMAGE_PATH: storageReference.path,
+          });
+          Get.back();
+        }
+      }
     }
 
     void _sendMessage() {
