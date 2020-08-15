@@ -38,4 +38,5 @@ class FirestoreConstants {
   static const PAYMENT_ERROR = "payment_error";
   static const REFUND_ON = "refund_on";
   static const REFUND_BY = "refund_by";
+  static const IS_PICTURE_MESSAGE = "is_picture_message";
 }
