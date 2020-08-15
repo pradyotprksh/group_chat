@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_share/flutter_share.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:group_chat/src/screens/razorpay_screen.dart';
 import 'package:group_chat/src/util/string.dart';
 import 'package:in_app_review/in_app_review.dart';
 import 'package:package_info/package_info.dart';
@@ -26,6 +28,22 @@ class OtherOptions extends StatelessWidget {
                 style: GoogleFonts.asap(
                   fontSize: 20,
                 ),
+              ),
+            ),
+            ListTile(
+              onTap: () {
+                Get.toNamed(RazorPayScreen.route_name);
+              },
+              title: Text(
+                'Donate',
+                style: GoogleFonts.asap(),
+              ),
+              subtitle: Text(
+                'Contribute a small amount for us to help us grow.',
+                style: GoogleFonts.asap(),
+              ),
+              trailing: Icon(
+                Icons.keyboard_arrow_right,
               ),
             ),
             ListTile(
