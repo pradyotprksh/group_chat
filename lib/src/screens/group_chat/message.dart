@@ -61,7 +61,7 @@ class Message extends StatelessWidget {
               vertical: 10,
               horizontal: 16,
             ),
-            child: SelectableLinkify(
+            child: Linkify(
               onOpen: (link) async {
                 if (await canLaunch(link.url)) {
                   await launch(link.url);

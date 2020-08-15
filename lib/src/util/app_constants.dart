@@ -10,4 +10,6 @@ class AppConstants {
   static const RAZOR_PAY_KEY_SECRET_LIVE = "qY7410FsSWbtaeCIi8AMKbP0";
   static const RAZOR_PAY_TEST_ID = "rzp_test_ebFuSfLcpqisMx";
   static const RAZOR_PAY_LIVE_ID = "rzp_live_xg3OpwvwW5MQGK";
+  static const APP_LINK =
+      "https://play.google.com/store/apps/details?id=com.project.pradyotprakash.group_chat";
 }

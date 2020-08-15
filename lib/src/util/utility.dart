@@ -16,6 +16,20 @@ class Utility {
     );
   }
 
+  static showNotDismissibleSnackBar(message) {
+    Get.rawSnackbar(
+      message: message,
+      dismissDirection: SnackDismissDirection.VERTICAL,
+      snackPosition: SnackPosition.TOP,
+      margin: EdgeInsets.all(
+        15.0,
+      ),
+      borderRadius: 15.0,
+      isDismissible: false,
+      duration: Duration(days: 1),
+    );
+  }
+
   static showLoadingDialog(message) {
     Get.defaultDialog(
       content: Column(

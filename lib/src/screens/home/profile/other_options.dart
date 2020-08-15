@@ -4,14 +4,13 @@ import 'package:flutter_share/flutter_share.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:group_chat/src/screens/razorpay_screen.dart';
+import 'package:group_chat/src/util/app_constants.dart';
 import 'package:group_chat/src/util/string.dart';
 import 'package:group_chat/src/util/utility.dart';
-import 'package:in_app_review/in_app_review.dart';
 import 'package:package_info/package_info.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class OtherOptions extends StatelessWidget {
-  final InAppReview inAppReview = InAppReview.instance;
-
   final DocumentSnapshot userDataSnapshot;
 
   OtherOptions(this.userDataSnapshot);
@@ -84,8 +83,12 @@ class OtherOptions extends StatelessWidget {
             ),
             ListTile(
               onTap: () async {
-                if (await inAppReview.isAvailable()) {
-                  inAppReview.requestReview();
+                if (await canLaunch(
+                  AppConstants.APP_LINK,
+                )) {
+                  launch(
+                    AppConstants.APP_LINK,
+                  );
                 }
               },
               title: Text(
