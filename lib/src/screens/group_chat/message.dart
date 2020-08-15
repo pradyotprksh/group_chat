@@ -1,7 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:group_chat/src/screens/group_chat/circle_profile_image.dart';
+import 'package:group_chat/src/screens/profile_details_bottom_sheet.dart';
 import 'package:group_chat/src/util/firestore_constants.dart';
 
 class Message extends StatelessWidget {
@@ -27,6 +29,11 @@ class Message extends StatelessWidget {
             ),
           if (!isMe)
             GestureDetector(
+              onTap: () {
+                Get.bottomSheet(
+                  ProfileDetailsBottomSheet(snapshot),
+                );
+              },
               child: CircleProfileImage(
                 snapshot[FirestoreConstants.USER_PROFILE_PIC],
               ),
@@ -64,10 +71,8 @@ class Message extends StatelessWidget {
             width: 15,
           ),
           if (isMe)
-            GestureDetector(
-              child: CircleProfileImage(
-                snapshot[FirestoreConstants.USER_PROFILE_PIC],
-              ),
+            CircleProfileImage(
+              snapshot[FirestoreConstants.USER_PROFILE_PIC],
             ),
           if (isMe)
             const SizedBox(

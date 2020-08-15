@@ -77,8 +77,10 @@ class OtherOptions extends StatelessWidget {
                     height: 50,
                     width: 50,
                   ),
+                  applicationName: StringConstant.APP_NAME,
                   applicationVersion: packageSnapshot.data.version,
-                  applicationLegalese: 'A place where all the groups will meet together.',
+                  applicationLegalese:
+                      'A place where all the groups will meet together.',
                 );
               },
               title: Text(

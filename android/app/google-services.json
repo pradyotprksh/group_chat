@@ -15,6 +15,22 @@
       },
       "oauth_client": [
         {
+          "client_id": "761688015932-2rlfaqk7jsb507cupfsr0ud5fdt2u337.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.project.pradyotprakash.group_chat",
+            "certificate_hash": "fe61474adf53c1d7c756f78849fe6093935bc192"
+          }
+        },
+        {
+          "client_id": "761688015932-2p4v6a3h5qsqpron71cdj8t3kfrtagmp.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.project.pradyotprakash.group_chat",
+            "certificate_hash": "8a6015e7961836a0c7fb5233dc0c53d411836741"
+          }
+        },
+        {
           "client_id": "761688015932-bnurc8d5jidju0jb9h0gaosh42pjjob5.apps.googleusercontent.com",
           "client_type": 3
         }

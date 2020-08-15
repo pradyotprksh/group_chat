@@ -131,8 +131,15 @@ class HomePage extends StatelessWidget {
                                           style:
                                               GoogleFonts.asap(fontSize: 18.0),
                                         ),
-                                        trailing:
-                                            Icon(Icons.chat_bubble_outline),
+                                        subtitle: Text(
+                                          groupDetailsSnapshot.data[
+                                              FirestoreConstants
+                                                  .GROUP_DESCRIPTION],
+                                          style: GoogleFonts.asap(),
+                                        ),
+                                        trailing: Icon(
+                                          Icons.arrow_right,
+                                        ),
                                       ),
                                       Divider(
                                         thickness: 1,
