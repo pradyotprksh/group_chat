@@ -58,6 +58,10 @@ dependencies:
 
   menu: ^0.1.4
 
+  clipboard_manager: ^0.0.1
+
+  shimmer: ^1.1.1
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

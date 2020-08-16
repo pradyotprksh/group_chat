@@ -19,7 +19,7 @@ class RazorPayScreen extends StatefulWidget {
 class _RazorPayScreenState extends State<RazorPayScreen> {
   Razorpay _razorPay;
   var _currentSelected = -1;
-  var _currentDonateValue = 10;
+  var _currentDonateValue = 0;
   final _controller = TextEditingController();
   var _userId = "";
 
@@ -75,6 +75,11 @@ class _RazorPayScreenState extends State<RazorPayScreen> {
   }
 
   void _setupRazorPayOptions() {
+    if (_currentDonateValue == 0) {
+      Utility.showSnackBar(
+          "Please select an amount you want to donate...", Colors.red);
+      return;
+    }
     Utility.showLoadingDialog("Waiting for Razor pay...");
     var options = {
       'key': AppConstants.RAZOR_PAY_LIVE_ID,

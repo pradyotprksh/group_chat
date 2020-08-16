@@ -30,8 +30,7 @@ class GroupChatScreen extends StatelessWidget {
               child: Column(
                 children: [
                   Expanded(
-                    child:
-                        Messages(Get.arguments, currentUserSnapshot.data.uid),
+                    child: Messages(Get.arguments, currentUserSnapshot.data),
                   ),
                   NewMessage(Get.arguments, currentUserSnapshot.data),
                 ],

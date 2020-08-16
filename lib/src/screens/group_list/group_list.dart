@@ -7,6 +7,7 @@ import 'package:group_chat/src/screens/group_list/single_group_detail.dart';
 import 'package:group_chat/src/util/firestore_constants.dart';
 import 'package:group_chat/src/widget/center_circular_progressbar.dart';
 import 'package:group_chat/src/widget/center_text.dart';
+import 'package:group_chat/src/widget/shimmer_layout.dart';
 
 class GroupList extends StatelessWidget {
   static const route_name = "group_list";
@@ -58,12 +59,7 @@ class GroupList extends StatelessWidget {
                     builder: (_, groupDetailsSnapshot) {
                       if (groupDetailsSnapshot.connectionState ==
                           ConnectionState.waiting) {
-                        return Padding(
-                          padding: const EdgeInsets.all(
-                            15.0,
-                          ),
-                          child: CenterText("Getting group details..."),
-                        );
+                        return ShimmerLayout();
                       } else if (groupDetailsSnapshot.data == null) {
                         return CenterText("Not able to get group details");
                       } else {

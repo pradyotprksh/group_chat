@@ -1,3 +1,4 @@
+import 'package:clipboard_manager/clipboard_manager.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
@@ -31,13 +32,16 @@ class ImageMessage extends StatelessWidget {
                   .document(snapshot.reference.path)
                   .delete();
             } catch (error) {
-              print(error);
+              Utility.showSnackBar(error.toString(), Colors.red);
             }
             Get.back();
           }),
-        /*MenuItem("Reply", () {}),
+        MenuItem("Reply", () {}),
         if (isMe) MenuItem("Report", () {}),
-        MenuItem("Copy", () {}),*/
+        MenuItem("Copy", () {
+          ClipboardManager.copyToClipBoard(snapshot[FirestoreConstants.MESSAGE])
+              .then((value) => Utility.showSnackBar("Copied", Colors.green));
+        }),
       ],
       child: GestureDetector(
         onTap: () {
@@ -75,14 +79,16 @@ class ImageMessage extends StatelessWidget {
               Container(
                 decoration: BoxDecoration(
                   color:
-                      isMe ? Colors.grey[300] : Theme.of(context).primaryColor,
+                  isMe ? Colors.grey[300] : Theme
+                      .of(context)
+                      .primaryColor,
                   borderRadius: BorderRadius.only(
                     topLeft: Radius.circular(12),
                     topRight: Radius.circular(12),
                     bottomLeft:
-                        !isMe ? Radius.circular(0) : Radius.circular(12),
+                    !isMe ? Radius.circular(0) : Radius.circular(12),
                     bottomRight:
-                        !isMe ? Radius.circular(12) : Radius.circular(0),
+                    !isMe ? Radius.circular(12) : Radius.circular(0),
                   ),
                 ),
                 padding: const EdgeInsets.all(
@@ -97,9 +103,9 @@ class ImageMessage extends StatelessWidget {
                     topLeft: Radius.circular(12),
                     topRight: Radius.circular(12),
                     bottomLeft:
-                        !isMe ? Radius.circular(0) : Radius.circular(12),
+                    !isMe ? Radius.circular(0) : Radius.circular(12),
                     bottomRight:
-                        !isMe ? Radius.circular(12) : Radius.circular(0),
+                    !isMe ? Radius.circular(12) : Radius.circular(0),
                   ),
                   child: Image.network(
                     snapshot[FirestoreConstants.MESSAGE],

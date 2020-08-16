@@ -24,7 +24,7 @@ class NewMessage extends StatelessWidget {
 
     Future getImage() async {
       final pickedFile = await picker.getImage(
-        source: ImageSource.camera,
+        source: ImageSource.gallery,
         imageQuality: 40,
       );
       if (pickedFile != null) {
@@ -60,7 +60,7 @@ class NewMessage extends StatelessWidget {
               FirestoreConstants.IMAGE_PATH: storageReference.path,
             });
           } catch (error) {
-            print(error);
+            Utility.showSnackBar(error.toString(), Colors.red);
           }
           Get.back();
         }

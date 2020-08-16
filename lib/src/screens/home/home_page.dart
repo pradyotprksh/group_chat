@@ -11,6 +11,7 @@ import 'package:group_chat/src/util/string.dart';
 import 'package:group_chat/src/util/utility.dart';
 import 'package:group_chat/src/widget/center_circular_progressbar.dart';
 import 'package:group_chat/src/widget/center_text.dart';
+import 'package:group_chat/src/widget/shimmer_layout.dart';
 
 class HomePage extends StatelessWidget {
   final GroupController _groupController = Get.find();
@@ -69,13 +70,7 @@ class HomePage extends StatelessWidget {
                               builder: (_, groupDetailsSnapshot) {
                                 if (groupDetailsSnapshot.connectionState ==
                                     ConnectionState.waiting) {
-                                  return Padding(
-                                    padding: const EdgeInsets.all(
-                                      15.0,
-                                    ),
-                                    child:
-                                        CenterText("Getting group details..."),
-                                  );
+                                  return ShimmerLayout();
                                 } else if (groupDetailsSnapshot.data == null) {
                                   return CenterText(
                                       "Not able to get group details");
