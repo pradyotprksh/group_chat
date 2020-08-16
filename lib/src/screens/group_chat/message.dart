@@ -124,7 +124,9 @@ class Message extends StatelessWidget {
         if (!isMe)
           MenuItem(
             "Report",
-            () {},
+            () {
+              Utility.showSnackBar("Coming Soon!!", Colors.green);
+            },
           ),
         MenuItem(
           "Copy",

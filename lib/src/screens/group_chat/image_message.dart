@@ -36,8 +36,9 @@ class ImageMessage extends StatelessWidget {
             }
             Get.back();
           }),
-        MenuItem("Reply", () {}),
-        if (isMe) MenuItem("Report", () {}),
+        if (!isMe) MenuItem("Report", () {
+          Utility.showSnackBar("Coming Soon!!", Colors.green);
+        }),
         MenuItem("Copy", () {
           ClipboardManager.copyToClipBoard(snapshot[FirestoreConstants.MESSAGE])
               .then((value) => Utility.showSnackBar("Copied", Colors.green));
