@@ -27,9 +27,9 @@ class GroupDetailBottomSheet extends StatelessWidget {
         ),
       ),
       body: FutureBuilder(
-        future: Firestore.instance
+        future: FirebaseFirestore.instance
             .collection(FirestoreConstants.GROUPS)
-            .document(groupName)
+            .doc(groupName)
             .get(),
         builder: (_, groupSnapshot) {
           if (groupSnapshot.connectionState == ConnectionState.waiting) {
@@ -39,11 +39,11 @@ class GroupDetailBottomSheet extends StatelessWidget {
           } else {
             var snapshot = groupSnapshot.data;
             return FutureBuilder(
-              future: Firestore.instance
+              future: FirebaseFirestore.instance
                   .collection(FirestoreConstants.GROUPS)
-                  .document(groupName)
+                  .doc(groupName)
                   .collection(FirestoreConstants.USER)
-                  .getDocuments(),
+                  .get(),
               builder: (_, groupUsersSnapshot) {
                 if (groupUsersSnapshot.connectionState ==
                     ConnectionState.waiting) {
@@ -52,9 +52,9 @@ class GroupDetailBottomSheet extends StatelessWidget {
                   return CenterText("Not able to get group data.");
                 } else {
                   return FutureBuilder(
-                    future: Firestore.instance
+                    future: FirebaseFirestore.instance
                         .collection(FirestoreConstants.USER)
-                        .document(snapshot[FirestoreConstants.CREATED_BY])
+                        .doc(snapshot.get(FirestoreConstants.CREATED_BY))
                         .get(),
                     builder: (_, userSnapshot) {
                       if (userSnapshot.connectionState ==
@@ -65,7 +65,7 @@ class GroupDetailBottomSheet extends StatelessWidget {
                       } else {
                         return FutureBuilder(
                           future: _groupController.isUserJoinedTheGroup(
-                              snapshot[FirestoreConstants.GROUP_NAME]),
+                              snapshot.get(FirestoreConstants.GROUP_NAME)),
                           builder: (_, groupJoinedSnapshot) {
                             if (groupJoinedSnapshot.connectionState ==
                                 ConnectionState.waiting) {
@@ -85,8 +85,8 @@ class GroupDetailBottomSheet extends StatelessWidget {
                                         FadeInImage(
                                           fit: BoxFit.cover,
                                           image: NetworkImage(
-                                            snapshot[FirestoreConstants
-                                                .GROUP_BACKGROUND_IMAGE],
+                                            snapshot.get(FirestoreConstants
+                                                .GROUP_BACKGROUND_IMAGE),
                                           ),
                                           placeholder: AssetImage(
                                               "assets/default_group_background.jpg"),
@@ -94,12 +94,26 @@ class GroupDetailBottomSheet extends StatelessWidget {
                                         Tooltip(
                                           message: "Go To Group",
                                           child: ListTile(
-                                            onTap: () {
-                                              Get.toNamed(
-                                                  GroupChatScreen.route_name,
-                                                  arguments: snapshot[
-                                                  FirestoreConstants
-                                                      .GROUP_NAME]);
+                                            onTap: () async {
+                                              Utility.showLoadingDialog(
+                                                  "Opening Please Wait...");
+                                              var isAllowed = await _groupController
+                                                  .isUserJoinedTheGroup(snapshot
+                                                      .get(FirestoreConstants
+                                                          .GROUP_NAME));
+                                              if (isAllowed) {
+                                                Get.back();
+                                                Get.toNamed(
+                                                    GroupChatScreen.route_name,
+                                                    arguments: snapshot.get(
+                                                        FirestoreConstants
+                                                            .GROUP_NAME));
+                                              } else {
+                                                Get.back();
+                                                Utility.showSnackBar(
+                                                    "You are not a member of this group. To chat in this group please send a request first",
+                                                    Colors.red);
+                                              }
                                             },
                                             leading: CircleAvatar(
                                               backgroundColor: Colors.white,
@@ -108,8 +122,9 @@ class GroupDetailBottomSheet extends StatelessWidget {
                                                   8.0,
                                                 ),
                                                 child: Image.network(
-                                                  snapshot[FirestoreConstants
-                                                      .GROUP_PROFILE_IMAGE],
+                                                  snapshot.get(
+                                                      FirestoreConstants
+                                                          .GROUP_PROFILE_IMAGE),
                                                   fit: BoxFit.cover,
                                                 ),
                                               ),
@@ -119,14 +134,14 @@ class GroupDetailBottomSheet extends StatelessWidget {
                                               color: Colors.white,
                                             ),
                                             title: Text(
-                                              snapshot[FirestoreConstants
-                                                  .GROUP_NAME],
+                                              snapshot.get(FirestoreConstants
+                                                  .GROUP_NAME),
                                               style: GoogleFonts.asap(
                                                   fontSize: 18.0),
                                             ),
                                             subtitle: Text(
-                                              snapshot[FirestoreConstants
-                                                  .GROUP_DESCRIPTION],
+                                              snapshot.get(FirestoreConstants
+                                                  .GROUP_DESCRIPTION),
                                               style: GoogleFonts.asap(),
                                             ),
                                           ),
@@ -136,12 +151,13 @@ class GroupDetailBottomSheet extends StatelessWidget {
                                           title: Text(
                                             "Created On ${Utility
                                                 .getTimeFromTimeStamp(
-                                                snapshot[FirestoreConstants
-                                                    .CREATED_ON])}",
+                                                snapshot.get(FirestoreConstants
+                                                    .CREATED_ON))}",
                                           ),
                                           subtitle: Text(
-                                              "By ${userData[FirestoreConstants
-                                                  .USER_NAME]}"),
+                                              "By ${userData.get(
+                                                  FirestoreConstants
+                                                      .USER_NAME)}"),
                                         ),
                                         ListTile(
                                           title: Text(
@@ -149,12 +165,13 @@ class GroupDetailBottomSheet extends StatelessWidget {
                                                 .length} users has joined the group",
                                           ),
                                           subtitle: Text(
-                                              snapshot[FirestoreConstants
-                                                  .GROUP_SIZE] ==
+                                              snapshot.get(FirestoreConstants
+                                                  .GROUP_SIZE) ==
                                                   0
                                                   ? ""
-                                                  : "${snapshot[FirestoreConstants
-                                                  .GROUP_SIZE] -
+                                                  : "${snapshot.get(
+                                                  FirestoreConstants
+                                                      .GROUP_SIZE) -
                                                   groupUsersSnapshot.data
                                                       .documents
                                                       .length} space left"),
@@ -163,10 +180,10 @@ class GroupDetailBottomSheet extends StatelessWidget {
                                     ),
                                   ),
                                   if (!groupJoinedSnapshot.data)
-                                    if (snapshot[FirestoreConstants
-                                        .GROUP_SIZE] !=
-                                        0 && (snapshot[FirestoreConstants
-                                        .GROUP_SIZE] -
+                                    if (snapshot.get(FirestoreConstants
+                                        .GROUP_SIZE) !=
+                                        0 && (snapshot.get(FirestoreConstants
+                                        .GROUP_SIZE) -
                                         groupUsersSnapshot.data
                                             .documents
                                             .length > 0))
@@ -178,11 +195,12 @@ class GroupDetailBottomSheet extends StatelessWidget {
                                             padding: const EdgeInsets.all(
                                               15.0,
                                             ),
-                                            onPressed: (snapshot[FirestoreConstants
-                                                .GROUP_SIZE] !=
+                                            onPressed: (snapshot.get(
+                                                FirestoreConstants
+                                                    .GROUP_SIZE) !=
                                                 0 &&
-                                                (snapshot[FirestoreConstants
-                                                    .GROUP_SIZE] -
+                                                (snapshot.get(FirestoreConstants
+                                                    .GROUP_SIZE) -
                                                     groupUsersSnapshot.data
                                                         .documents
                                                         .length <= 0))
@@ -190,18 +208,19 @@ class GroupDetailBottomSheet extends StatelessWidget {
                                                 : () async {
                                               await _groupController
                                                   .sendRequest(
-                                                snapshot[FirestoreConstants
-                                                    .GROUP_NAME],
-                                                userData[FirestoreConstants
-                                                    .USER_ID],
+                                                snapshot.get(FirestoreConstants
+                                                    .GROUP_NAME),
+                                                userData.get(FirestoreConstants
+                                                    .USER_ID),
                                               );
                                             },
                                             child: Text(
-                                              (snapshot[FirestoreConstants
-                                                  .GROUP_SIZE] !=
+                                              (snapshot.get(FirestoreConstants
+                                                  .GROUP_SIZE) !=
                                                   0 &&
-                                                  (snapshot[FirestoreConstants
-                                                      .GROUP_SIZE] -
+                                                  (snapshot.get(
+                                                      FirestoreConstants
+                                                          .GROUP_SIZE) -
                                                       groupUsersSnapshot.data
                                                           .documents
                                                           .length <= 0))

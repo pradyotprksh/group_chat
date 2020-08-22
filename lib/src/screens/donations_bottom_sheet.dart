@@ -25,9 +25,9 @@ class DonationsBottomSheet extends StatelessWidget {
         ),
       ),
       body: StreamBuilder(
-        stream: Firestore.instance
+        stream: FirebaseFirestore.instance
             .collection(FirestoreConstants.USER)
-            .document(userId)
+            .doc(userId)
             .collection(FirestoreConstants.DONATIONS)
             .orderBy(
               FirestoreConstants.PAYMENT_ON,
@@ -45,73 +45,71 @@ class DonationsBottomSheet extends StatelessWidget {
               return ListView.builder(
                 itemCount: donationsData.length,
                 itemBuilder: (_, position) {
+                  DocumentSnapshot document = donationsData[position];
+                  bool isPaymentSuccess = document.get(
+                      FirestoreConstants.PAYMENT_SUCCESS);
                   return ListTile(
                     leading: Icon(
-                      donationsData[position]
-                              [FirestoreConstants.PAYMENT_SUCCESS]
+                      isPaymentSuccess
                           ? Icons.attach_money
                           : Icons.money_off,
-                      color: donationsData[position]
-                              [FirestoreConstants.PAYMENT_SUCCESS]
+                      color: isPaymentSuccess
                           ? Colors.green
                           : Colors.red,
                     ),
                     title: Text(
-                      'Amount: ${donationsData[position][FirestoreConstants.PAYMENT_AMOUNT]}',
+                      'Amount: ${document.get(
+                          FirestoreConstants.PAYMENT_AMOUNT)}',
                       style: GoogleFonts.asap(),
                     ),
                     subtitle: Text(
-                      donationsData[position]
-                              [FirestoreConstants.PAYMENT_SUCCESS]
+                      isPaymentSuccess
                           ? "Successfully Donated"
-                          : "Not able to donate because ${donationsData[position][FirestoreConstants.PAYMENT_ERROR]}",
+                          : "Not able to donate because ${document.get(
+                          FirestoreConstants.PAYMENT_ERROR)}",
                       style: GoogleFonts.asap(
-                        color: donationsData[position]
-                                [FirestoreConstants.PAYMENT_SUCCESS]
+                        color: isPaymentSuccess
                             ? Colors.green
                             : Colors.red,
                       ),
                     ),
-                    trailing: donationsData[position]
-                            [FirestoreConstants.PAYMENT_SUCCESS]
+                    trailing: isPaymentSuccess
                         ? Tooltip(
-                            message: "Ask For Refund",
-                            child: IconButton(
-                              onPressed: () async {
-                                Utility.showLoadingDialog(
-                                    "Creating refund request...");
-                                await Firestore.instance
-                                    .collection(FirestoreConstants.REFUNDS)
-                                    .document(donationsData[position]
-                                        [FirestoreConstants.PAYMENT_ID])
-                                    .setData({
-                                  FirestoreConstants.REFUND_BY: userId,
-                                  FirestoreConstants.PAYMENT_ID:
-                                      donationsData[position]
-                                          [FirestoreConstants.PAYMENT_ID],
-                                  FirestoreConstants.REFUND_ON:
-                                      DateTime.now().millisecondsSinceEpoch,
-                                  FirestoreConstants.PAYMENT_SUCCESS:
-                                      donationsData[position]
-                                          [FirestoreConstants.PAYMENT_SUCCESS],
-                                  FirestoreConstants.PAYMENT_AMOUNT:
-                                      donationsData[position]
-                                          [FirestoreConstants.PAYMENT_AMOUNT],
-                                });
-                                Get.back();
-                                Utility.showSnackBar(
-                                    ("A request for refund is initiated. We will get back to you"),
-                                    Colors.green);
-                              },
-                              icon: Icon(
-                                Icons.settings_backup_restore,
-                              ),
-                            ),
-                          )
+                      message: "Ask For Refund",
+                      child: IconButton(
+                        onPressed: () async {
+                          Utility.showLoadingDialog(
+                              "Creating refund request...");
+                          await FirebaseFirestore.instance
+                              .collection(FirestoreConstants.REFUNDS)
+                              .doc(document.get(FirestoreConstants.PAYMENT_ID))
+                              .set({
+                            FirestoreConstants.REFUND_BY: userId,
+                            FirestoreConstants.PAYMENT_ID:
+                            document.get(FirestoreConstants.PAYMENT_ID),
+                            FirestoreConstants.REFUND_ON:
+                            DateTime
+                                .now()
+                                .millisecondsSinceEpoch,
+                            FirestoreConstants.PAYMENT_SUCCESS:
+                            isPaymentSuccess,
+                            FirestoreConstants.PAYMENT_AMOUNT:
+                            document.get(FirestoreConstants.PAYMENT_AMOUNT),
+                          });
+                          Get.back();
+                          Utility.showSnackBar(
+                              ("A request for refund is initiated. We will get back to you"),
+                              Colors.green);
+                        },
+                        icon: Icon(
+                          Icons.settings_backup_restore,
+                        ),
+                      ),
+                    )
                         : Container(
-                            width: 0,
-                            height: 0,
-                          ),
+                      width: 0,
+                      height: 0,
+                    ),
                   );
                 },
               );

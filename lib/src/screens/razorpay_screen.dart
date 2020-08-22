@@ -26,12 +26,12 @@ class _RazorPayScreenState extends State<RazorPayScreen> {
   void _handlePaymentSuccess(PaymentSuccessResponse response) async {
     Get.back();
     Utility.showLoadingDialog("Confirming Payment...");
-    await Firestore.instance
+    await FirebaseFirestore.instance
         .collection(FirestoreConstants.USER)
-        .document(_userId)
+        .doc(_userId)
         .collection(FirestoreConstants.DONATIONS)
-        .document(response.paymentId)
-        .setData({
+        .doc(response.paymentId)
+        .set({
       FirestoreConstants.PAYMENT_ID: response.paymentId,
       FirestoreConstants.PAYMENT_ON: DateTime.now().millisecondsSinceEpoch,
       FirestoreConstants.PAYMENT_SUCCESS: true,
@@ -43,14 +43,16 @@ class _RazorPayScreenState extends State<RazorPayScreen> {
 
   void _handlePaymentError(PaymentFailureResponse response) async {
     Get.back();
-    await Firestore.instance
+    await FirebaseFirestore.instance
         .collection(FirestoreConstants.USER)
-        .document(_userId)
+        .doc(_userId)
         .collection(FirestoreConstants.DONATIONS)
-        .document()
-        .setData({
+        .doc()
+        .set({
       FirestoreConstants.PAYMENT_ID: "",
-      FirestoreConstants.PAYMENT_ON: DateTime.now().millisecondsSinceEpoch,
+      FirestoreConstants.PAYMENT_ON: DateTime
+          .now()
+          .millisecondsSinceEpoch,
       FirestoreConstants.PAYMENT_SUCCESS: false,
       FirestoreConstants.PAYMENT_AMOUNT: _currentDonateValue,
       FirestoreConstants.PAYMENT_ERROR: response.message,
@@ -62,7 +64,7 @@ class _RazorPayScreenState extends State<RazorPayScreen> {
   void initState() {
     super.initState();
     DocumentSnapshot userSnapshot = Get.arguments;
-    _userId = userSnapshot[FirestoreConstants.USER_ID];
+    _userId = userSnapshot.get(FirestoreConstants.USER_ID);
     _razorPay = Razorpay();
     _razorPay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSuccess);
     _razorPay.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentError);

@@ -11,7 +11,7 @@ import 'package:group_chat/src/widget/center_text.dart';
 
 class Messages extends StatelessWidget {
   final String groupName;
-  final FirebaseUser user;
+  final User user;
 
   Messages(this.groupName, this.user);
 
@@ -20,9 +20,9 @@ class Messages extends StatelessWidget {
     var mediaQuery = MediaQuery.of(context).size;
 
     return StreamBuilder(
-      stream: Firestore.instance
+      stream: FirebaseFirestore.instance
           .collection(FirestoreConstants.GROUPS)
-          .document(groupName)
+          .doc(groupName)
           .collection(FirestoreConstants.MESSAGES)
           .orderBy(
             FirestoreConstants.MESSAGE_ON,
@@ -44,25 +44,23 @@ class Messages extends StatelessWidget {
             reverse: true,
             itemCount: snapshot.length,
             itemBuilder: (listContext, position) {
+              DocumentSnapshot document = snapshot[position];
               bool isMe =
-                  user.uid == snapshot[position][FirestoreConstants.MESSAGE_BY];
-              if ((snapshot[position][FirestoreConstants.IS_CREATED_MESSAGE] !=
-                  null &&
-                  snapshot[position]
-                  [FirestoreConstants.IS_CREATED_MESSAGE]) ||
-                  (snapshot[position][FirestoreConstants.IS_JOINED_MESSAGE] !=
-                      null &&
-                      snapshot[position]
-                      [FirestoreConstants.IS_JOINED_MESSAGE])) {
-                return OtherMessageWidget(snapshot[position]);
-              } else if (snapshot[position]
-                          [FirestoreConstants.IS_PICTURE_MESSAGE] !=
-                      null &&
-                  snapshot[position][FirestoreConstants.IS_PICTURE_MESSAGE]) {
-                return ImageMessage(isMe, snapshot[position], mediaQuery.width);
+                  user.uid == document.get(FirestoreConstants.MESSAGE_BY);
+              if ((document.data().containsKey(
+                  FirestoreConstants.IS_CREATED_MESSAGE) &&
+                  document.get(FirestoreConstants.IS_CREATED_MESSAGE)) ||
+                  (document.data().containsKey(
+                      FirestoreConstants.IS_JOINED_MESSAGE) &&
+                      document.get(FirestoreConstants.IS_JOINED_MESSAGE))) {
+                return OtherMessageWidget(document);
+              } else if (document.data().containsKey(
+                  FirestoreConstants.IS_PICTURE_MESSAGE) &&
+                  document.get(FirestoreConstants.IS_PICTURE_MESSAGE)) {
+                return ImageMessage(isMe, document, mediaQuery.width);
               } else {
                 return Message(
-                    isMe, snapshot[position], mediaQuery.width, groupName,
+                    isMe, document, mediaQuery.width, groupName,
                     user);
               }
             },

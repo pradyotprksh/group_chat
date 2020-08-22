@@ -27,17 +27,17 @@ class GroupList extends StatelessWidget {
       ),
       body: StreamBuilder(
         stream: (type == "0")
-            ? Firestore.instance
-            .collection(FirestoreConstants.USER)
-            .document(userId)
-            .collection(FirestoreConstants.GROUPS)
-            .where(FirestoreConstants.IS_OWNER, isEqualTo: true)
-            .snapshots()
-            : Firestore.instance
-            .collection(FirestoreConstants.USER)
-            .document(userId)
-            .collection(FirestoreConstants.GROUPS)
-            .snapshots(),
+            ? FirebaseFirestore.instance
+                .collection(FirestoreConstants.USER)
+                .doc(userId)
+                .collection(FirestoreConstants.GROUPS)
+                .where(FirestoreConstants.IS_OWNER, isEqualTo: true)
+                .snapshots()
+            : FirebaseFirestore.instance
+                .collection(FirestoreConstants.USER)
+                .doc(userId)
+                .collection(FirestoreConstants.GROUPS)
+                .snapshots(),
         builder: (_, groupSnapshot) {
           if (groupSnapshot.connectionState == ConnectionState.waiting)
             return CenterCircularProgressBar();
@@ -51,9 +51,9 @@ class GroupList extends StatelessWidget {
                 itemCount: snapshot.length,
                 itemBuilder: (listContext, position) {
                   return FutureBuilder(
-                    future: Firestore.instance
-                        .document(snapshot[position]
-                    [FirestoreConstants.GROUP_REFERENCE]
+                    future: FirebaseFirestore.instance
+                        .doc(snapshot[position]
+                        .get(FirestoreConstants.GROUP_REFERENCE)
                         .path)
                         .get(),
                     builder: (_, groupDetailsSnapshot) {

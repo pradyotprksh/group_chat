@@ -48,72 +48,56 @@ class _GroupInvitesScreenState extends State<GroupInvitesScreen> {
           ),
         ],
       ),
-      body: FutureBuilder(
-        future: FirebaseAuth.instance.currentUser(),
-        builder: (_, currentUserSnapshot) {
-          if (currentUserSnapshot.connectionState == ConnectionState.waiting) {
+      body: StreamBuilder(
+        stream: FirebaseFirestore.instance
+            .collection(FirestoreConstants.USER)
+            .doc(FirebaseAuth.instance.currentUser.uid)
+            .collection(FirestoreConstants.GROUPS_INVITE)
+            .orderBy(
+              FirestoreConstants.INVITE_ON,
+              descending: true,
+            )
+            .snapshots(),
+        builder: (_, groupsInviteSnapshot) {
+          if (groupsInviteSnapshot.connectionState == ConnectionState.waiting) {
             return CenterCircularProgressBar();
-          } else if (currentUserSnapshot.data == null) {
+          } else if (groupsInviteSnapshot.data == null) {
             return CenterText("Not able to get your data. Please try again,");
           } else {
-            return StreamBuilder(
-              stream: Firestore.instance
-                  .collection(FirestoreConstants.USER)
-                  .document(currentUserSnapshot.data.uid)
-                  .collection(FirestoreConstants.GROUPS_INVITE)
-                  .orderBy(
-                    FirestoreConstants.INVITE_ON,
-                    descending: true,
-                  )
-                  .snapshots(),
-              builder: (_, groupsInviteSnapshot) {
-                if (groupsInviteSnapshot.connectionState ==
-                    ConnectionState.waiting) {
-                  return CenterCircularProgressBar();
-                } else if (groupsInviteSnapshot.data == null) {
-                  return CenterText(
-                      "Not able to get your data. Please try again,");
-                } else {
-                  var groupsInvite = groupsInviteSnapshot.data.documents;
-                  return ListView.builder(
-                    shrinkWrap: true,
-                    itemCount: groupsInvite.length,
-                    itemBuilder: (_, position) {
-                      return FutureBuilder(
-                        future: Firestore.instance
-                            .document(
-                              groupsInvite[position]
-                                      [FirestoreConstants.INVITE_ID]
-                                  .path,
-                            )
-                            .get(),
-                        builder: (_, inviteDetails) {
-                          if (inviteDetails.connectionState ==
-                                  ConnectionState.done &&
-                              inviteDetails.data != null) {
-                            if (!inviteDetails.data[
-                                    FirestoreConstants.GROUP_INVITE_ACCEPTED] &&
-                                !inviteDetails
-                                    .data[FirestoreConstants.IS_REJECTED]) {
-                              if (inviteDetails.data[
-                                      FirestoreConstants.GROUP_INVITE_BY] !=
-                                  currentUserSnapshot.data.uid) {
-                                return ReceivedInviteList(
-                                    inviteDetails.data, updateInviteList);
-                              } else {
-                                return SentInviteList(inviteDetails.data);
-                              }
-                            } else {
-                              return Container();
-                            }
-                          } else {
-                            return Container();
-                          }
-                        },
-                      );
-                    },
-                  );
-                }
+            var groupsInvite = groupsInviteSnapshot.data.documents;
+            return ListView.builder(
+              shrinkWrap: true,
+              itemCount: groupsInvite.length,
+              itemBuilder: (_, position) {
+                return FutureBuilder(
+                  future: FirebaseFirestore.instance
+                      .doc(
+                        groupsInvite[position][FirestoreConstants.INVITE_ID]
+                            .path,
+                      )
+                      .get(),
+                  builder: (_, inviteDetails) {
+                    if (inviteDetails.connectionState == ConnectionState.done &&
+                        inviteDetails.data != null) {
+                      if (!inviteDetails
+                              .data[FirestoreConstants.GROUP_INVITE_ACCEPTED] &&
+                          !inviteDetails.data[FirestoreConstants.IS_REJECTED]) {
+                        if (inviteDetails
+                                .data[FirestoreConstants.GROUP_INVITE_BY] !=
+                            FirebaseAuth.instance.currentUser.uid) {
+                          return ReceivedInviteList(
+                              inviteDetails.data, updateInviteList);
+                        } else {
+                          return SentInviteList(inviteDetails.data);
+                        }
+                      } else {
+                        return Container();
+                      }
+                    } else {
+                      return Container();
+                    }
+                  },
+                );
               },
             );
           }

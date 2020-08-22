@@ -27,159 +27,145 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-      future: FirebaseAuth.instance.currentUser(),
-      builder: (_, currentUserSnapshot) {
-        if (currentUserSnapshot.connectionState == ConnectionState.waiting) {
+      future: FirebaseFirestore.instance
+          .collection(FirestoreConstants.USER)
+          .doc(FirebaseAuth.instance.currentUser.uid)
+          .get(),
+      builder: (_, userDataSnapshot) {
+        if (userDataSnapshot.connectionState == ConnectionState.waiting) {
           return CenterCircularProgressBar();
-        }
-        if (currentUserSnapshot.data == null) {
+        } else if (userDataSnapshot.data == null) {
           return CenterText("Something Went Wrong while getting user data.");
         } else {
+          var userData = userDataSnapshot.data;
           return FutureBuilder(
-            future: Firestore.instance
+            future: FirebaseFirestore.instance
                 .collection(FirestoreConstants.USER)
-                .document(currentUserSnapshot.data.uid)
+                .doc(FirebaseAuth.instance.currentUser.uid)
+                .collection(FirestoreConstants.GROUPS)
+                .where(FirestoreConstants.IS_OWNER, isEqualTo: true)
                 .get(),
-            builder: (_, userDataSnapshot) {
-              if (userDataSnapshot.connectionState == ConnectionState.waiting) {
+            builder: (_, groupOwnerSnapshot) {
+              if (groupOwnerSnapshot.connectionState ==
+                  ConnectionState.waiting) {
                 return CenterCircularProgressBar();
-              } else if (userDataSnapshot.data == null) {
-                return CenterText(
-                    "Something Went Wrong while getting user data.");
-              } else {
-                var userData = userDataSnapshot.data;
-                return FutureBuilder(
-                  future: Firestore.instance
-                      .collection(FirestoreConstants.USER)
-                      .document(currentUserSnapshot.data.uid)
-                      .collection(FirestoreConstants.GROUPS)
-                      .where(FirestoreConstants.IS_OWNER, isEqualTo: true)
-                      .getDocuments(),
-                  builder: (_, groupOwnerSnapshot) {
-                    if (groupOwnerSnapshot.connectionState ==
-                        ConnectionState.waiting) {
-                      return CenterCircularProgressBar();
-                    }
-                    var groupOwner = 0;
-                    if (groupOwnerSnapshot.data != null) {
-                      groupOwner = groupOwnerSnapshot.data.documents.length;
-                    }
-                    return FutureBuilder(
-                      future: Firestore.instance
-                          .collection(FirestoreConstants.USER)
-                          .document(currentUserSnapshot.data.uid)
-                          .collection(FirestoreConstants.GROUPS)
-                          .getDocuments(),
-                      builder: (_, groupJoinedSnapshot) {
-                        if (groupJoinedSnapshot.connectionState ==
-                            ConnectionState.waiting) {
-                          return CenterCircularProgressBar();
-                        }
-                        var groupJoined = 0;
-                        if (groupJoinedSnapshot.data != null) {
-                          groupJoined =
-                              groupJoinedSnapshot.data.documents.length;
-                        }
-                        return Scaffold(
-                          backgroundColor: Theme.of(context).backgroundColor,
-                          floatingActionButton: Tooltip(
-                            message: "Create group",
-                            child: FloatingActionButton(
-                              onPressed: () {
-                                Get.toNamed(CreateGroup.route_name).then(
-                                      (value) {
-                                    if (value != null) {
-                                      setState(() {});
-                                    }
-                                  },
-                                );
-                              },
-                              child: Icon(
-                                Icons.create,
-                              ),
-                            ),
-                          ),
-                          body: SingleChildScrollView(
-                            child: SafeArea(
-                              top: true,
-                              child: Container(
-                                width: double.infinity,
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: <Widget>[
-                                    Container(
-                                      height: 100,
-                                      width: 100,
-                                      padding: const EdgeInsets.all(
-                                        15.0,
-                                      ),
-                                      child: ClipOval(
-                                        child: FadeInImage(
-                                          image: NetworkImage(
-                                            userData[FirestoreConstants
-                                                .USER_PROFILE_PIC],
-                                          ),
-                                          placeholder: AssetImage(
-                                            "assets/default_profile.png",
-                                          ),
-                                        ),
-                                      ),
+              }
+              var groupOwner = 0;
+              if (groupOwnerSnapshot.data != null) {
+                groupOwner = groupOwnerSnapshot.data.documents.length;
+              }
+              return FutureBuilder(
+                future: FirebaseFirestore.instance
+                    .collection(FirestoreConstants.USER)
+                    .doc(FirebaseAuth.instance.currentUser.uid)
+                    .collection(FirestoreConstants.GROUPS)
+                    .get(),
+                builder: (_, groupJoinedSnapshot) {
+                  if (groupJoinedSnapshot.connectionState ==
+                      ConnectionState.waiting) {
+                    return CenterCircularProgressBar();
+                  }
+                  var groupJoined = 0;
+                  if (groupJoinedSnapshot.data != null) {
+                    groupJoined = groupJoinedSnapshot.data.documents.length;
+                  }
+                  return Scaffold(
+                    backgroundColor: Theme.of(context).backgroundColor,
+                    floatingActionButton: Tooltip(
+                      message: "Create group",
+                      child: FloatingActionButton(
+                        onPressed: () {
+                          Get.toNamed(CreateGroup.route_name).then(
+                            (value) {
+                              if (value != null) {
+                                setState(() {});
+                              }
+                            },
+                          );
+                        },
+                        child: Icon(
+                          Icons.create,
+                        ),
+                      ),
+                    ),
+                    body: SingleChildScrollView(
+                      child: SafeArea(
+                        top: true,
+                        child: Container(
+                          width: double.infinity,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: <Widget>[
+                              Container(
+                                height: 100,
+                                width: 100,
+                                padding: const EdgeInsets.all(
+                                  15.0,
+                                ),
+                                child: ClipOval(
+                                  child: FadeInImage(
+                                    image: NetworkImage(
+                                      userData.get(
+                                          FirestoreConstants.USER_PROFILE_PIC),
                                     ),
-                                    Text(
-                                      userData[FirestoreConstants.USER_NAME],
-                                      style: GoogleFonts.asap(
-                                        fontSize: 20,
-                                      ),
+                                    placeholder: AssetImage(
+                                      "assets/default_profile.png",
                                     ),
-                                    const SizedBox(
-                                      height: 30.0,
-                                    ),
-                                    ProfileGroupDetails(groupOwner, groupJoined,
-                                        currentUserSnapshot.data.uid),
-                                    Divider(),
-                                    GroupOptions(currentUserSnapshot.data.uid),
-                                    Divider(),
-                                    if (Platform.isAndroid)
-                                      OtherOptions(userData),
-                                    Divider(),
-                                    ListTile(
-                                      onTap: () {
-                                        Get.defaultDialog(
-                                          title: "Logout",
-                                          content: Text(
-                                            "Sure you want to log out?",
-                                            style: GoogleFonts.asap(),
-                                          ),
-                                          textConfirm: "Yes",
-                                          confirmTextColor: Colors.white,
-                                          onConfirm: () {
-                                            authController.logOut();
-                                            Get.back();
-                                          },
-                                        );
-                                      },
-                                      title: Text(
-                                        "Log Out",
-                                        textAlign: TextAlign.center,
-                                        style: GoogleFonts.asap(
-                                          fontSize: 20,
-                                          color: Theme.of(context).accentColor,
-                                        ),
-                                      ),
-                                    ),
-                                    Divider(),
-                                  ],
+                                  ),
                                 ),
                               ),
-                            ),
+                              Text(
+                                userData.get(FirestoreConstants.USER_NAME),
+                                style: GoogleFonts.asap(
+                                  fontSize: 20,
+                                ),
+                              ),
+                              const SizedBox(
+                                height: 30.0,
+                              ),
+                              ProfileGroupDetails(groupOwner, groupJoined,
+                                  FirebaseAuth.instance.currentUser.uid),
+                              Divider(),
+                              GroupOptions(
+                                  FirebaseAuth.instance.currentUser.uid),
+                              Divider(),
+                              if (Platform.isAndroid) OtherOptions(userData),
+                              Divider(),
+                              ListTile(
+                                onTap: () {
+                                  Get.defaultDialog(
+                                    title: "Logout",
+                                    content: Text(
+                                      "Sure you want to log out?",
+                                      style: GoogleFonts.asap(),
+                                    ),
+                                    textConfirm: "Yes",
+                                    confirmTextColor: Colors.white,
+                                    onConfirm: () {
+                                      authController.logOut();
+                                      Get.back();
+                                    },
+                                  );
+                                },
+                                title: Text(
+                                  "Log Out",
+                                  textAlign: TextAlign.center,
+                                  style: GoogleFonts.asap(
+                                    fontSize: 20,
+                                    color: Theme.of(context).accentColor,
+                                  ),
+                                ),
+                              ),
+                              Divider(),
+                            ],
                           ),
-                        );
-                      },
-                    );
-                  },
-                );
-              }
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              );
             },
           );
         }

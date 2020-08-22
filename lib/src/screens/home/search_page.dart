@@ -69,7 +69,7 @@ class _SearchPageState extends State<SearchPage> {
           ),
           Expanded(
             child: StreamBuilder(
-              stream: Firestore.instance
+              stream: FirebaseFirestore.instance
                   .collection(FirestoreConstants.GROUPS)
                   .where(
                     FirestoreConstants.GROUP_NAME,

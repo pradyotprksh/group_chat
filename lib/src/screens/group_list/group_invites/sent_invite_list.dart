@@ -18,11 +18,12 @@ class SentInviteList extends StatelessWidget {
             Icons.access_time,
           ),
           title: Text(
-            "On ${Utility.getTimeFromTimeStamp(inviteDetails[FirestoreConstants.INVITE_ON])}",
+            "On ${Utility.getTimeFromTimeStamp(inviteDetails.get(FirestoreConstants.INVITE_ON))}",
             style: GoogleFonts.asap(),
           ),
           subtitle: Text(
-            "Invitation sent to ${inviteDetails[FirestoreConstants.GROUP_NAME]}. Waiting for confirmation from the group owner. We will let you know when you have being allowed into the group. Thanks.",
+            "Invitation sent to ${inviteDetails.get(FirestoreConstants
+                .GROUP_NAME)}. Waiting for confirmation from the group owner. We will let you know when you have being allowed into the group. Thanks.",
             style: GoogleFonts.asap(),
           ),
         ),

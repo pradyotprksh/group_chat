@@ -17,9 +17,9 @@ class GroupController extends GetxController {
   void createGroup(groupName, groupDescription) async {
     if (isLoading) return;
     updateLoading();
-    await Firestore.instance
+    await FirebaseFirestore.instance
         .collection(FirestoreConstants.GROUPS)
-        .document(groupName)
+        .doc(groupName)
         .get()
         .then((groupCheck) {
       if (groupCheck.exists) {
@@ -30,76 +30,63 @@ class GroupController extends GetxController {
         updateLoading();
       } else {
         // get current user
-        FirebaseAuth.instance.currentUser().then((currentUser) {
-          if (currentUser != null) {
-            // create group
-            DocumentReference documentReference = Firestore.instance
+        User currentUser = FirebaseAuth.instance.currentUser;
+        DocumentReference documentReference = FirebaseFirestore.instance
+            .collection(FirestoreConstants.GROUPS)
+            .doc(groupName);
+        documentReference.set({
+          FirestoreConstants.GROUP_NAME: groupName,
+          FirestoreConstants.GROUP_DESCRIPTION: groupDescription,
+          FirestoreConstants.GROUP_SIZE: 100,
+          FirestoreConstants.CREATED_BY: currentUser.uid,
+          FirestoreConstants.CREATED_ON: DateTime.now().millisecondsSinceEpoch,
+          FirestoreConstants.GROUP_PROFILE_IMAGE:
+              AppConstants.DEFAULT_GROUP_PROFILE_IMAGE,
+          FirestoreConstants.GROUP_BACKGROUND_IMAGE:
+              AppConstants.DEFAULT_GROUP_PROFILE_BACKGROUND,
+        }).then((value) {
+          // add the current user to the group
+          FirebaseFirestore.instance
+              .collection(FirestoreConstants.GROUPS)
+              .doc(groupName)
+              .collection(FirestoreConstants.USER)
+              .doc(currentUser.uid)
+              .set({
+            FirestoreConstants.JOINED_ON: DateTime.now().millisecondsSinceEpoch,
+            FirestoreConstants.IS_OWNER: true,
+            FirestoreConstants.USER_ID: currentUser.uid,
+          }).then((value) {
+            // add the group to the current user
+            FirebaseFirestore.instance
+                .collection(FirestoreConstants.USER)
+                .doc(currentUser.uid)
                 .collection(FirestoreConstants.GROUPS)
-                .document(groupName);
-            documentReference.setData({
+                .doc(groupName)
+                .set({
+              FirestoreConstants.IS_OWNER: true,
+              FirestoreConstants.GROUP_REFERENCE: documentReference,
               FirestoreConstants.GROUP_NAME: groupName,
-              FirestoreConstants.GROUP_DESCRIPTION: groupDescription,
-              FirestoreConstants.GROUP_SIZE: 100,
-              FirestoreConstants.CREATED_BY: currentUser.uid,
-              FirestoreConstants.CREATED_ON:
-                  DateTime.now().millisecondsSinceEpoch,
-              FirestoreConstants.GROUP_PROFILE_IMAGE:
-                  AppConstants.DEFAULT_GROUP_PROFILE_IMAGE,
-              FirestoreConstants.GROUP_BACKGROUND_IMAGE:
-                  AppConstants.DEFAULT_GROUP_PROFILE_BACKGROUND,
             }).then((value) {
-              // add the current user to the group
-              Firestore.instance
+              FirebaseFirestore.instance
                   .collection(FirestoreConstants.GROUPS)
-                  .document(groupName)
-                  .collection(FirestoreConstants.USER)
-                  .document(currentUser.uid)
-                  .setData({
-                FirestoreConstants.JOINED_ON:
+                  .doc(groupName)
+                  .collection(FirestoreConstants.MESSAGES)
+                  .doc()
+                  .set({
+                FirestoreConstants.MESSAGE_ON:
                     DateTime.now().millisecondsSinceEpoch,
-                FirestoreConstants.IS_OWNER: true,
-                FirestoreConstants.USER_ID: currentUser.uid,
+                FirestoreConstants.IS_CREATED_MESSAGE: true,
+                FirestoreConstants.MESSAGE_BY: currentUser.uid,
+                FirestoreConstants.MESSAGE:
+                    "${currentUser.displayName} created the group",
+                FirestoreConstants.USER_NAME: "${currentUser.displayName}",
+                FirestoreConstants.USER_PROFILE_PIC: "${currentUser.photoURL}",
               }).then((value) {
-                // add the group to the current user
-                Firestore.instance
-                    .collection(FirestoreConstants.USER)
-                    .document(currentUser.uid)
-                    .collection(FirestoreConstants.GROUPS)
-                    .document(groupName)
-                    .setData({
-                  FirestoreConstants.IS_OWNER: true,
-                  FirestoreConstants.GROUP_REFERENCE: documentReference,
-                  FirestoreConstants.GROUP_NAME: groupName,
-                }).then((value) {
-                  Firestore.instance
-                      .collection(FirestoreConstants.GROUPS)
-                      .document(groupName)
-                      .collection(FirestoreConstants.MESSAGES)
-                      .document()
-                      .setData({
-                    FirestoreConstants.MESSAGE_ON:
-                        DateTime.now().millisecondsSinceEpoch,
-                    FirestoreConstants.IS_CREATED_MESSAGE: true,
-                    FirestoreConstants.MESSAGE_BY: currentUser.uid,
-                    FirestoreConstants.MESSAGE:
-                        "${currentUser.displayName} created the group",
-                    FirestoreConstants.USER_NAME: "${currentUser.displayName}",
-                    FirestoreConstants.USER_PROFILE_PIC:
-                        "${currentUser.photoUrl}",
-                  }).then((value) {
-                    updateLoading();
-                    Get.back(result: groupName);
-                  });
-                });
+                updateLoading();
+                Get.back(result: groupName);
               });
             });
-          } else {
-            updateLoading();
-            Utility.showSnackBar(
-              "Not able to get current user details.",
-              Colors.red,
-            );
-          }
+          });
         });
       }
     });
@@ -107,12 +94,12 @@ class GroupController extends GetxController {
 
   Future<bool> isUserJoinedTheGroup(String groupName) async {
     var isAllowed = false;
-    var currentUser = await FirebaseAuth.instance.currentUser();
-    var groupDetails = await Firestore.instance
+    var currentUser = FirebaseAuth.instance.currentUser;
+    var groupDetails = await FirebaseFirestore.instance
         .collection(FirestoreConstants.USER)
-        .document(currentUser.uid)
+        .doc(currentUser.uid)
         .collection(FirestoreConstants.GROUPS)
-        .document(groupName)
+        .doc(groupName)
         .get();
     if (groupDetails.exists) {
       isAllowed = true;
@@ -125,12 +112,12 @@ class GroupController extends GetxController {
   Future<void> sendRequest(groupName, inviteBy) async {
     try {
       Utility.showLoadingDialog("Sending request. Please wait...");
-      var firebaseUser = await FirebaseAuth.instance.currentUser();
-      var checkInvite = await Firestore.instance
+      var firebaseUser = FirebaseAuth.instance.currentUser;
+      var checkInvite = await FirebaseFirestore.instance
           .collection(FirestoreConstants.GROUPS)
-          .document(groupName)
+          .doc(groupName)
           .collection(FirestoreConstants.GROUPS_INVITE)
-          .document("${firebaseUser.uid}$groupName$inviteBy")
+          .doc("${firebaseUser.uid}$groupName$inviteBy")
           .get();
       if (checkInvite.exists) {
         Get.back();
@@ -138,36 +125,40 @@ class GroupController extends GetxController {
             "Invitation already send. Waiting for confirmation.", Colors.red);
         return;
       } else {
-        var documentReference = Firestore.instance
+        var documentReference = FirebaseFirestore.instance
             .collection(FirestoreConstants.GROUPS)
-            .document(groupName)
+            .doc(groupName)
             .collection(FirestoreConstants.GROUPS_INVITE)
-            .document("${firebaseUser.uid}$groupName$inviteBy");
-        await documentReference.setData({
+            .doc("${firebaseUser.uid}$groupName$inviteBy");
+        await documentReference.set({
           FirestoreConstants.GROUP_NAME: groupName,
           FirestoreConstants.GROUP_INVITE_TO: inviteBy,
           FirestoreConstants.GROUP_INVITE_BY: firebaseUser.uid,
           FirestoreConstants.USER_NAME: firebaseUser.displayName,
-          FirestoreConstants.USER_PROFILE_PIC: firebaseUser.photoUrl,
+          FirestoreConstants.USER_PROFILE_PIC: firebaseUser.photoURL,
           FirestoreConstants.INVITE_ON: DateTime
               .now()
               .millisecondsSinceEpoch,
           FirestoreConstants.GROUP_INVITE_ACCEPTED: false,
           FirestoreConstants.IS_REJECTED: false,
         });
-        await Firestore.instance.collection(FirestoreConstants.USER).document(
+        await FirebaseFirestore.instance.collection(FirestoreConstants.USER)
+            .doc(
             firebaseUser.uid)
             .collection(FirestoreConstants.GROUPS_INVITE)
-            .document().setData({
+            .doc()
+            .set({
           FirestoreConstants.INVITE_ID: documentReference,
           FirestoreConstants.INVITE_ON: DateTime
               .now()
               .millisecondsSinceEpoch,
         });
-        await Firestore.instance.collection(FirestoreConstants.USER).document(
+        await FirebaseFirestore.instance.collection(FirestoreConstants.USER)
+            .doc(
             inviteBy)
             .collection(FirestoreConstants.GROUPS_INVITE)
-            .document().setData({
+            .doc()
+            .set({
           FirestoreConstants.INVITE_ID: documentReference,
           FirestoreConstants.INVITE_ON: DateTime
               .now()
@@ -189,11 +180,11 @@ class GroupController extends GetxController {
   Future<void> updateInviteStatus(DocumentSnapshot inviteDetails,
       int type) async {
     Utility.showLoadingDialog("Please wait while we update the invite status");
-    await Firestore.instance
+    await FirebaseFirestore.instance
         .collection(FirestoreConstants.GROUPS)
-        .document(inviteDetails[FirestoreConstants.GROUP_NAME])
+        .doc(inviteDetails.get(FirestoreConstants.GROUP_NAME))
         .collection(FirestoreConstants.GROUPS_INVITE)
-        .document(inviteDetails.documentID).updateData({
+        .doc(inviteDetails.id).update({
       FirestoreConstants.GROUP_INVITE_ACCEPTED: type == 1,
       FirestoreConstants.IS_REJECTED: type == 2,
     });
@@ -203,59 +194,60 @@ class GroupController extends GetxController {
     }
 
     // check if user is already in the group
-    var documents = await Firestore.instance
+    var documents = await FirebaseFirestore.instance
         .collection(FirestoreConstants.USER)
-        .document(inviteDetails[FirestoreConstants.GROUP_INVITE_BY])
+        .doc(inviteDetails.get(FirestoreConstants.GROUP_INVITE_BY))
         .collection(FirestoreConstants.GROUPS)
         .where(FirestoreConstants.GROUP_NAME,
-        isEqualTo: inviteDetails[FirestoreConstants.GROUP_NAME])
-        .getDocuments();
-    if (documents.documents.length == 0) {
-      DocumentReference documentReference = Firestore.instance
+        isEqualTo: inviteDetails.get(FirestoreConstants.GROUP_NAME))
+        .get();
+    if (documents.docs.length == 0) {
+      DocumentReference documentReference = FirebaseFirestore.instance
           .collection(FirestoreConstants.GROUPS)
-          .document(inviteDetails[FirestoreConstants.GROUP_NAME]);
+          .doc(inviteDetails.get(FirestoreConstants.GROUP_NAME));
       await documentReference
           .collection(FirestoreConstants.USER)
-          .document(inviteDetails[FirestoreConstants.GROUP_INVITE_BY])
-          .setData({
+          .doc(inviteDetails.get(FirestoreConstants.GROUP_INVITE_BY))
+          .set({
         FirestoreConstants.JOINED_ON: DateTime
             .now()
             .millisecondsSinceEpoch,
         FirestoreConstants.IS_OWNER: false,
-        FirestoreConstants.USER_ID: inviteDetails[FirestoreConstants
-            .GROUP_INVITE_BY],
+        FirestoreConstants.USER_ID: inviteDetails.get(FirestoreConstants
+            .GROUP_INVITE_BY),
       });
-      await Firestore.instance
+      await FirebaseFirestore.instance
           .collection(FirestoreConstants.USER)
-          .document(inviteDetails[FirestoreConstants.GROUP_INVITE_BY])
+          .doc(inviteDetails.get(FirestoreConstants.GROUP_INVITE_BY))
           .collection(FirestoreConstants.GROUPS)
-          .document(inviteDetails[FirestoreConstants.GROUP_NAME])
-          .setData({
+          .doc(inviteDetails.get(FirestoreConstants.GROUP_NAME))
+          .set({
         FirestoreConstants.IS_OWNER: false,
-        FirestoreConstants.GROUP_NAME: inviteDetails[FirestoreConstants
-            .GROUP_NAME],
+        FirestoreConstants.GROUP_NAME: inviteDetails.get(FirestoreConstants
+            .GROUP_NAME),
         FirestoreConstants.GROUP_REFERENCE:
         documentReference
       });
-      await Firestore.instance
+      await FirebaseFirestore.instance
           .collection(FirestoreConstants.GROUPS)
-          .document(inviteDetails[FirestoreConstants.GROUP_NAME])
+          .doc(inviteDetails.get(FirestoreConstants.GROUP_NAME))
           .collection(FirestoreConstants.MESSAGES)
-          .document()
-          .setData({
+          .doc()
+          .set({
         FirestoreConstants.MESSAGE_ON:
         DateTime
             .now()
             .millisecondsSinceEpoch,
         FirestoreConstants.IS_JOINED_MESSAGE: true,
-        FirestoreConstants.MESSAGE_BY: inviteDetails[FirestoreConstants
-            .GROUP_INVITE_BY],
-        FirestoreConstants.MESSAGE: "${inviteDetails[FirestoreConstants
-            .USER_NAME]} joined the group",
-        FirestoreConstants.USER_NAME: "${inviteDetails[FirestoreConstants
-            .USER_NAME]}",
-        FirestoreConstants.USER_PROFILE_PIC: "${inviteDetails[FirestoreConstants
-            .USER_PROFILE_PIC]}",
+        FirestoreConstants.MESSAGE_BY: inviteDetails.get(FirestoreConstants
+            .GROUP_INVITE_BY),
+        FirestoreConstants.MESSAGE: "${inviteDetails.get(FirestoreConstants
+            .USER_NAME)} joined the group",
+        FirestoreConstants.USER_NAME: "${inviteDetails.get(FirestoreConstants
+            .USER_NAME)}",
+        FirestoreConstants.USER_PROFILE_PIC: "${inviteDetails.get(
+            FirestoreConstants
+                .USER_PROFILE_PIC)}",
       });
     }
   }

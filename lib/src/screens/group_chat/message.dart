@@ -17,7 +17,7 @@ class Message extends StatelessWidget {
   final DocumentSnapshot snapshot;
   final double screenWidth;
   final String groupName;
-  final FirebaseUser user;
+  final User user;
 
   Message(
       this.isMe, this.snapshot, this.screenWidth, this.groupName, this.user);
@@ -31,7 +31,7 @@ class Message extends StatelessWidget {
       if (_editMessageValue.trim() == "") {
         return;
       }
-      Firestore.instance.document(snapshot.reference.path).updateData({
+      FirebaseFirestore.instance.doc(snapshot.reference.path).update({
         FirestoreConstants.MESSAGE: _editMessageValue,
       }).then((value) => _editMessageValue = "");
     }
@@ -40,19 +40,21 @@ class Message extends StatelessWidget {
       if (_replyMessageValue.trim() == "") {
         return;
       }
-      Firestore.instance
+      FirebaseFirestore.instance
           .collection(FirestoreConstants.GROUPS)
-          .document(groupName)
+          .doc(groupName)
           .collection(FirestoreConstants.MESSAGES)
-          .document()
-          .setData({
-        FirestoreConstants.MESSAGE_ON: DateTime.now().millisecondsSinceEpoch,
+          .doc()
+          .set({
+        FirestoreConstants.MESSAGE_ON: DateTime
+            .now()
+            .millisecondsSinceEpoch,
         FirestoreConstants.IS_REPLY_MESSAGE: true,
-        FirestoreConstants.REPLY_FOR: snapshot[FirestoreConstants.MESSAGE],
+        FirestoreConstants.REPLY_FOR: snapshot.get(FirestoreConstants.MESSAGE),
         FirestoreConstants.MESSAGE_BY: user.uid,
         FirestoreConstants.MESSAGE: _replyMessageValue,
         FirestoreConstants.USER_NAME: "${user.displayName}",
-        FirestoreConstants.USER_PROFILE_PIC: "${user.photoUrl}",
+        FirestoreConstants.USER_PROFILE_PIC: "${user.photoURL}",
       }).then((value) {
         _replyMessageValue = "";
       });
@@ -65,8 +67,8 @@ class Message extends StatelessWidget {
             "Delete",
             () async {
               try {
-                await Firestore.instance
-                    .document(snapshot.reference.path)
+                await FirebaseFirestore.instance
+                    .doc(snapshot.reference.path)
                     .delete();
               } catch (error) {
                 Utility.showSnackBar(error.toString(), Colors.red);
@@ -91,14 +93,17 @@ class Message extends StatelessWidget {
                   style: Theme.of(context).textTheme.bodyText1,
                   decoration: InputDecoration(
                     labelText:
-                        'Replying for "${snapshot[FirestoreConstants.MESSAGE]}"...',
+                    'Replying for "${snapshot.get(
+                        FirestoreConstants.MESSAGE)}"...',
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(
                         25.0,
                       ),
                     ),
                     suffixIcon: IconButton(
-                      color: Theme.of(context).accentColor,
+                      color: Theme
+                          .of(context)
+                          .accentColor,
                       icon: Icon(
                         Icons.done,
                       ),
@@ -132,7 +137,7 @@ class Message extends StatelessWidget {
           "Copy",
           () {
             ClipboardManager.copyToClipBoard(
-                    snapshot[FirestoreConstants.MESSAGE])
+                snapshot.get(FirestoreConstants.MESSAGE))
                 .then((value) => Utility.showSnackBar("Copied", Colors.green));
           },
         ),
@@ -205,7 +210,7 @@ class Message extends StatelessWidget {
                   );
                 },
                 child: CircleProfileImage(
-                  snapshot[FirestoreConstants.USER_PROFILE_PIC],
+                  snapshot.get(FirestoreConstants.USER_PROFILE_PIC),
                 ),
               ),
             const SizedBox(
@@ -230,23 +235,27 @@ class Message extends StatelessWidget {
               ),
               child: Column(
                 crossAxisAlignment:
-                    (snapshot[FirestoreConstants.IS_REPLY_MESSAGE] != null &&
-                            snapshot[FirestoreConstants.IS_REPLY_MESSAGE])
-                        ? CrossAxisAlignment.stretch
-                        : CrossAxisAlignment.center,
+                (snapshot.data().containsKey(
+                    FirestoreConstants.IS_REPLY_MESSAGE) &&
+                    snapshot.get(FirestoreConstants.IS_REPLY_MESSAGE))
+                    ? CrossAxisAlignment.stretch
+                    : CrossAxisAlignment.center,
                 children: [
-                  if (snapshot[FirestoreConstants.IS_REPLY_MESSAGE] != null &&
-                      snapshot[FirestoreConstants.IS_REPLY_MESSAGE])
+                  if (snapshot.data().containsKey(
+                      FirestoreConstants.IS_REPLY_MESSAGE) &&
+                      snapshot.get(FirestoreConstants.IS_REPLY_MESSAGE))
                     Text(
-                      "Replied for \"${snapshot[FirestoreConstants.REPLY_FOR]}\"",
+                      "Replied for \"${snapshot.get(
+                          FirestoreConstants.REPLY_FOR)}\"",
                       style: GoogleFonts.asap(
                         color: isMe ? Colors.black : Colors.white,
                         fontWeight: FontWeight.bold,
                       ),
                       textAlign: isMe ? TextAlign.end : TextAlign.start,
                     ),
-                  if (snapshot[FirestoreConstants.IS_REPLY_MESSAGE] != null &&
-                      snapshot[FirestoreConstants.IS_REPLY_MESSAGE])
+                  if (snapshot.data().containsKey(
+                      FirestoreConstants.IS_REPLY_MESSAGE) &&
+                      snapshot.get(FirestoreConstants.IS_REPLY_MESSAGE))
                     const SizedBox(
                       height: 5,
                     ),
@@ -259,7 +268,7 @@ class Message extends StatelessWidget {
                             "Seems like the link is broken.", Colors.red);
                       }
                     },
-                    text: "${snapshot[FirestoreConstants.MESSAGE]}",
+                    text: "${snapshot.get(FirestoreConstants.MESSAGE)}",
                     style: GoogleFonts.asap(
                         color: isMe ? Colors.black : Colors.white),
                     linkStyle: GoogleFonts.asap(
@@ -278,7 +287,7 @@ class Message extends StatelessWidget {
             ),
             if (isMe)
               CircleProfileImage(
-                snapshot[FirestoreConstants.USER_PROFILE_PIC],
+                snapshot.get(FirestoreConstants.USER_PROFILE_PIC),
               ),
             if (isMe)
               const SizedBox(

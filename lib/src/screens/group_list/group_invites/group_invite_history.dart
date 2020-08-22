@@ -29,123 +29,104 @@ class _GroupInviteHistoryState extends State<GroupInviteHistory> {
           style: GoogleFonts.asap(),
         ),
       ),
-      body: FutureBuilder(
-        future: FirebaseAuth.instance.currentUser(),
-        builder: (_, currentUserSnapshot) {
-          if (currentUserSnapshot.connectionState == ConnectionState.waiting) {
+      body: StreamBuilder(
+        stream: FirebaseFirestore.instance
+            .collection(FirestoreConstants.USER)
+            .doc(FirebaseAuth.instance.currentUser.uid)
+            .collection(FirestoreConstants.GROUPS_INVITE)
+            .orderBy(
+              FirestoreConstants.INVITE_ON,
+              descending: true,
+            )
+            .snapshots(),
+        builder: (_, groupsInviteSnapshot) {
+          if (groupsInviteSnapshot.connectionState == ConnectionState.waiting) {
             return CenterCircularProgressBar();
-          } else if (currentUserSnapshot.data == null) {
+          } else if (groupsInviteSnapshot.data == null) {
             return CenterText("Not able to get your data. Please try again,");
           } else {
-            return StreamBuilder(
-              stream: Firestore.instance
-                  .collection(FirestoreConstants.USER)
-                  .document(currentUserSnapshot.data.uid)
-                  .collection(FirestoreConstants.GROUPS_INVITE)
-                  .orderBy(
-                    FirestoreConstants.INVITE_ON,
-                    descending: true,
-                  )
-                  .snapshots(),
-              builder: (_, groupsInviteSnapshot) {
-                if (groupsInviteSnapshot.connectionState ==
-                    ConnectionState.waiting) {
-                  return CenterCircularProgressBar();
-                } else if (groupsInviteSnapshot.data == null) {
-                  return CenterText(
-                      "Not able to get your data. Please try again,");
-                } else {
-                  var groupsInvite = groupsInviteSnapshot.data.documents;
-                  return ListView.builder(
-                    shrinkWrap: true,
-                    itemCount: groupsInvite.length,
-                    itemBuilder: (_, position) {
-                      return FutureBuilder(
-                        future: Firestore.instance
-                            .document(
-                              groupsInvite[position]
-                                      [FirestoreConstants.INVITE_ID]
-                                  .path,
-                            )
-                            .get(),
-                        builder: (_, inviteDetails) {
-                          if (inviteDetails.connectionState ==
-                                  ConnectionState.done &&
-                              inviteDetails.data != null) {
-                            if (inviteDetails.data[
-                                    FirestoreConstants.GROUP_INVITE_ACCEPTED] ||
-                                inviteDetails
-                                    .data[FirestoreConstants.IS_REJECTED]) {
-                              return Column(
-                                children: [
-                                  ListTile(
-                                    leading: Icon(
-                                      Icons.access_time,
-                                    ),
-                                    title: Text(
-                                      "On ${Utility.getTimeFromTimeStamp(inviteDetails.data[FirestoreConstants.INVITE_ON])}",
-                                      style: GoogleFonts.asap(),
-                                    ),
-                                    subtitle: Text(
-                                      (inviteDetails.data[FirestoreConstants
-                                                  .GROUP_INVITE_BY] !=
-                                              currentUserSnapshot.data.uid)
-                                          ? (inviteDetails.data[
-                                                  FirestoreConstants
-                                                      .GROUP_INVITE_ACCEPTED])
-                                              ? "You accepted the request from ${inviteDetails.data[FirestoreConstants.USER_NAME]} who wanted to join ${inviteDetails.data[FirestoreConstants.GROUP_NAME]}"
-                                              : "You rejected the request from ${inviteDetails.data[FirestoreConstants.USER_NAME]} who wanted to join ${inviteDetails.data[FirestoreConstants.GROUP_NAME]}"
-                                          : (inviteDetails.data[
-                                                  FirestoreConstants
-                                                      .GROUP_INVITE_ACCEPTED])
-                                              ? "Your request to join ${inviteDetails.data[FirestoreConstants.GROUP_NAME]} was accepted"
-                                              : "Your request to join ${inviteDetails.data[FirestoreConstants.GROUP_NAME]} was rejected",
-                                      style: GoogleFonts.asap(
-                                        color: (inviteDetails.data[
-                                                FirestoreConstants
-                                                    .GROUP_INVITE_ACCEPTED])
-                                            ? Colors.green
-                                            : Colors.red,
-                                      ),
-                                    ),
-                                  ),
-                                  if ((inviteDetails.data[FirestoreConstants
-                                              .GROUP_INVITE_BY] ==
-                                          currentUserSnapshot.data.uid) &&
-                                      !inviteDetails.data[FirestoreConstants
+            var groupsInvite = groupsInviteSnapshot.data.documents;
+            return ListView.builder(
+              shrinkWrap: true,
+              itemCount: groupsInvite.length,
+              itemBuilder: (_, position) {
+                return FutureBuilder(
+                  future: FirebaseFirestore.instance
+                      .doc(
+                        groupsInvite[position][FirestoreConstants.INVITE_ID]
+                            .path,
+                      )
+                      .get(),
+                  builder: (_, inviteDetails) {
+                    if (inviteDetails.connectionState == ConnectionState.done &&
+                        inviteDetails.data != null) {
+                      if (inviteDetails
+                              .data[FirestoreConstants.GROUP_INVITE_ACCEPTED] ||
+                          inviteDetails.data[FirestoreConstants.IS_REJECTED]) {
+                        return Column(
+                          children: [
+                            ListTile(
+                              leading: Icon(
+                                Icons.access_time,
+                              ),
+                              title: Text(
+                                "On ${Utility.getTimeFromTimeStamp(inviteDetails.data[FirestoreConstants.INVITE_ON])}",
+                                style: GoogleFonts.asap(),
+                              ),
+                              subtitle: Text(
+                                (inviteDetails.data[FirestoreConstants
+                                            .GROUP_INVITE_BY] !=
+                                        FirebaseAuth.instance.currentUser.uid)
+                                    ? (inviteDetails.data[FirestoreConstants
+                                            .GROUP_INVITE_ACCEPTED])
+                                        ? "You accepted the request from ${inviteDetails.data[FirestoreConstants.USER_NAME]} who wanted to join ${inviteDetails.data[FirestoreConstants.GROUP_NAME]}"
+                                        : "You rejected the request from ${inviteDetails.data[FirestoreConstants.USER_NAME]} who wanted to join ${inviteDetails.data[FirestoreConstants.GROUP_NAME]}"
+                                    : (inviteDetails.data[FirestoreConstants
+                                            .GROUP_INVITE_ACCEPTED])
+                                        ? "Your request to join ${inviteDetails.data[FirestoreConstants.GROUP_NAME]} was accepted"
+                                        : "Your request to join ${inviteDetails.data[FirestoreConstants.GROUP_NAME]} was rejected",
+                                style: GoogleFonts.asap(
+                                  color: (inviteDetails.data[FirestoreConstants
                                           .GROUP_INVITE_ACCEPTED])
-                                    Container(
-                                      width: double.infinity,
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 15.0,
-                                      ),
-                                      child: RaisedButton(
-                                        onPressed: () async {
-                                          await widget.updateInviteList(
-                                              inviteDetails.data, 3);
-                                          setState(() {});
-                                        },
-                                        color: Colors.orange,
-                                        child: Text('Send Again.'),
-                                      ),
-                                    ),
-                                  Divider(
-                                    thickness: 1,
-                                    color: Colors.grey,
-                                  ),
-                                ],
-                              );
-                            } else {
-                              return Container();
-                            }
-                          } else {
-                            return Container();
-                          }
-                        },
-                      );
-                    },
-                  );
-                }
+                                      ? Colors.green
+                                      : Colors.red,
+                                ),
+                              ),
+                            ),
+                            if ((inviteDetails.data[
+                                        FirestoreConstants.GROUP_INVITE_BY] ==
+                                    FirebaseAuth.instance.currentUser.uid) &&
+                                !inviteDetails.data[
+                                    FirestoreConstants.GROUP_INVITE_ACCEPTED])
+                              Container(
+                                width: double.infinity,
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 15.0,
+                                ),
+                                child: RaisedButton(
+                                  onPressed: () async {
+                                    await widget.updateInviteList(
+                                        inviteDetails.data, 3);
+                                    setState(() {});
+                                  },
+                                  color: Colors.orange,
+                                  child: Text('Send Again.'),
+                                ),
+                              ),
+                            Divider(
+                              thickness: 1,
+                              color: Colors.grey,
+                            ),
+                          ],
+                        );
+                      } else {
+                        return Container();
+                      }
+                    } else {
+                      return Container();
+                    }
+                  },
+                );
               },
             );
           }

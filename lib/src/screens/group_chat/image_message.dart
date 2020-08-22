@@ -26,10 +26,11 @@ class ImageMessage extends StatelessWidget {
             Utility.showNotDismissibleSnackBar("Deleting Image...");
             try {
               var imageReference = await FirebaseStorage.instance
-                  .getReferenceFromUrl(snapshot[FirestoreConstants.MESSAGE]);
+                  .getReferenceFromUrl(
+                      snapshot.get(FirestoreConstants.MESSAGE));
               await imageReference.delete();
-              await Firestore.instance
-                  .document(snapshot.reference.path)
+              await FirebaseFirestore.instance
+                  .doc(snapshot.reference.path)
                   .delete();
             } catch (error) {
               Utility.showSnackBar(error.toString(), Colors.red);
@@ -40,7 +41,8 @@ class ImageMessage extends StatelessWidget {
           Utility.showSnackBar("Coming Soon!!", Colors.green);
         }),
         MenuItem("Copy", () {
-          ClipboardManager.copyToClipBoard(snapshot[FirestoreConstants.MESSAGE])
+          ClipboardManager.copyToClipBoard(
+              snapshot.get(FirestoreConstants.MESSAGE))
               .then((value) => Utility.showSnackBar("Copied", Colors.green));
         }),
       ],
@@ -48,7 +50,7 @@ class ImageMessage extends StatelessWidget {
         onTap: () {
           Get.toNamed(
             ImagePreviewScreen.route_name,
-            arguments: snapshot[FirestoreConstants.MESSAGE],
+            arguments: snapshot.get(FirestoreConstants.MESSAGE),
           );
         },
         child: Container(
@@ -71,7 +73,7 @@ class ImageMessage extends StatelessWidget {
                     );
                   },
                   child: CircleProfileImage(
-                    snapshot[FirestoreConstants.USER_PROFILE_PIC],
+                    snapshot.get(FirestoreConstants.USER_PROFILE_PIC),
                   ),
                 ),
               const SizedBox(
@@ -109,7 +111,7 @@ class ImageMessage extends StatelessWidget {
                     !isMe ? Radius.circular(12) : Radius.circular(0),
                   ),
                   child: Image.network(
-                    snapshot[FirestoreConstants.MESSAGE],
+                    snapshot.get(FirestoreConstants.MESSAGE),
                   ),
                 ),
               ),
@@ -118,7 +120,7 @@ class ImageMessage extends StatelessWidget {
               ),
               if (isMe)
                 CircleProfileImage(
-                  snapshot[FirestoreConstants.USER_PROFILE_PIC],
+                  snapshot.get(FirestoreConstants.USER_PROFILE_PIC),
                 ),
               if (isMe)
                 const SizedBox(

@@ -22,11 +22,13 @@ class ReceivedInviteList extends StatelessWidget {
                   Icons.access_time,
                 ),
                 title: Text(
-                  "On ${Utility.getTimeFromTimeStamp(inviteDetails[FirestoreConstants.INVITE_ON])}",
+                  "On ${Utility.getTimeFromTimeStamp(inviteDetails.get(FirestoreConstants.INVITE_ON))}",
                   style: GoogleFonts.asap(),
                 ),
                 subtitle: Text(
-                  "Got invitation from ${inviteDetails[FirestoreConstants.USER_NAME]} for the group ${inviteDetails[FirestoreConstants.GROUP_NAME]}",
+                  "Got invitation from ${inviteDetails.get(FirestoreConstants
+                      .USER_NAME)} for the group ${inviteDetails.get(
+                      FirestoreConstants.GROUP_NAME)}",
                   style: GoogleFonts.asap(),
                 ),
               ),

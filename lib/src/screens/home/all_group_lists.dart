@@ -47,7 +47,7 @@ class AllGroupLists extends StatelessWidget {
           ),
           Expanded(
             child: StreamBuilder(
-              stream: Firestore.instance
+              stream: FirebaseFirestore.instance
                   .collection(FirestoreConstants.GROUPS)
                   .orderBy(
                     FirestoreConstants.GROUP_NAME,

@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:group_chat/src/screens/auth_screen.dart';
 import 'package:group_chat/src/screens/home/home_screen.dart';
 import 'package:group_chat/src/util/firestore_constants.dart';
 import 'package:group_chat/src/util/string.dart';
@@ -21,7 +22,7 @@ class AuthController extends GetxController {
 
   void loginWithGoogle() {
     updateLoading();
-    _handleSignIn().then((FirebaseUser user) {
+    _handleSignIn().then((User user) {
       setUserData(user);
     }).catchError((e) {
       print(e.toString());
@@ -33,75 +34,74 @@ class AuthController extends GetxController {
     });
   }
 
-  Future<FirebaseUser> _handleSignIn() async {
+  Future<User> _handleSignIn() async {
     final GoogleSignInAccount googleUser = await _googleSignIn.signIn();
     final GoogleSignInAuthentication googleAuth =
         await googleUser.authentication;
 
-    final AuthCredential credential = GoogleAuthProvider.getCredential(
+    final AuthCredential credential = GoogleAuthProvider.credential(
       accessToken: googleAuth.accessToken,
       idToken: googleAuth.idToken,
     );
 
-    final FirebaseUser user =
-        (await _auth.signInWithCredential(credential)).user;
+    final User user = (await _auth.signInWithCredential(credential)).user;
     return user;
   }
 
-  void setUserData(FirebaseUser user) {
-    Firestore.instance
+  void setUserData(User user) {
+    FirebaseFirestore.instance
         .collection(FirestoreConstants.USER)
-        .document(user.uid)
-        .setData({
+        .doc(user.uid)
+        .set({
       FirestoreConstants.USER_ID: user.uid,
       FirestoreConstants.USER_NAME: user.displayName,
-      FirestoreConstants.USER_PROFILE_PIC: user.photoUrl,
+      FirestoreConstants.USER_PROFILE_PIC: user.photoURL,
     }).then((_) {
       // check if user is already in the group
-      Firestore.instance
+      FirebaseFirestore.instance
           .collection(FirestoreConstants.USER)
-          .document(user.uid)
+          .doc(user.uid)
           .collection(FirestoreConstants.GROUPS)
           .where(FirestoreConstants.GROUP_NAME,
               isEqualTo: StringConstant.APP_NAME)
-          .getDocuments()
+          .get()
           .then((value) {
-        if (value.documents.length > 0) {
+        if (value.docs.length > 0) {
           updateLoading();
           Get.offNamed(HomeScreen.route_name);
         } else {
           // add user to the group
-          DocumentReference documentReference = Firestore.instance
+          DocumentReference documentReference = FirebaseFirestore.instance
               .collection(FirestoreConstants.GROUPS)
-              .document(StringConstant.APP_NAME);
+              .doc(StringConstant.APP_NAME);
 
           documentReference
               .collection(FirestoreConstants.USER)
-              .document(user.uid)
-              .setData({
+              .doc(user.uid)
+              .set({
             FirestoreConstants.JOINED_ON: DateTime.now().millisecondsSinceEpoch,
             FirestoreConstants.IS_OWNER: false,
             FirestoreConstants.USER_ID: user.uid,
           }).then((value) {
             // add group to the user
-            Firestore.instance
+            FirebaseFirestore.instance
                 .collection(FirestoreConstants.USER)
-                .document(user.uid)
+                .doc(user.uid)
                 .collection(FirestoreConstants.GROUPS)
-                .document(StringConstant.APP_NAME)
-                .setData({
+                .doc(StringConstant.APP_NAME)
+                .set({
               FirestoreConstants.IS_OWNER: false,
               FirestoreConstants.GROUP_NAME: StringConstant.APP_NAME,
               FirestoreConstants.GROUP_REFERENCE:
               documentReference
             }).then((value) {
               // add a message for the group
-              Firestore.instance
+              FirebaseFirestore.instance
                   .collection(FirestoreConstants.GROUPS)
-                  .document(StringConstant.APP_NAME)
+                  .doc(StringConstant.APP_NAME)
                   .collection(FirestoreConstants.MESSAGES)
-                  .document()
-                  .setData({
+                  .doc()
+                  .set({
                 FirestoreConstants.MESSAGE_ON:
                 DateTime
                     .now()
@@ -111,7 +111,7 @@ class AuthController extends GetxController {
                 FirestoreConstants.MESSAGE: "${user
                     .displayName} joined the group",
                 FirestoreConstants.USER_NAME: "${user.displayName}",
-                FirestoreConstants.USER_PROFILE_PIC: "${user.photoUrl}",
+                FirestoreConstants.USER_PROFILE_PIC: "${user.photoURL}",
               }).then((value) {
                 updateLoading();
                 Get.offNamed(HomeScreen.route_name);
@@ -131,7 +131,7 @@ class AuthController extends GetxController {
 
   Future<void> logOut() async {
     FirebaseAuth.instance.signOut().then((value) {
-      Get.offNamed("/");
+      Get.offNamed(AuthScreen.route_name);
     });
   }
 }

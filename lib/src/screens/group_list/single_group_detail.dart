@@ -28,16 +28,16 @@ class SingleGroupDetail extends StatelessWidget {
         onTap: () async {
           FocusScope.of(context).unfocus();
           Utility.showLoadingDialog("Opening Please Wait...");
-          var isAllowed = await _groupController
-              .isUserJoinedTheGroup(snapshot[FirestoreConstants.GROUP_NAME]);
+          var isAllowed = await _groupController.isUserJoinedTheGroup(
+              snapshot.get(FirestoreConstants.GROUP_NAME));
           if (isAllowed) {
             Get.back();
             Get.toNamed(GroupChatScreen.route_name,
-                arguments: snapshot[FirestoreConstants.GROUP_NAME]);
+                arguments: snapshot.get(FirestoreConstants.GROUP_NAME));
           } else {
             Get.back();
             Get.bottomSheet(GroupDetailBottomSheet(
-                snapshot[FirestoreConstants.GROUP_NAME]));
+                snapshot.get(FirestoreConstants.GROUP_NAME)));
             Utility.showSnackBar(
                 "You are not a member of this group. To chat in this group please send a request first",
                 Colors.red);
@@ -50,7 +50,7 @@ class SingleGroupDetail extends StatelessWidget {
             child: FadeInImage(
               fit: BoxFit.cover,
               image: NetworkImage(
-                snapshot[FirestoreConstants.GROUP_BACKGROUND_IMAGE],
+                snapshot.get(FirestoreConstants.GROUP_BACKGROUND_IMAGE),
               ),
               placeholder: AssetImage("assets/default_group_background.jpg"),
             ),
@@ -69,7 +69,7 @@ class SingleGroupDetail extends StatelessWidget {
                           8.0,
                         ),
                         child: Image.network(
-                          snapshot[FirestoreConstants.GROUP_PROFILE_IMAGE],
+                          snapshot.get(FirestoreConstants.GROUP_PROFILE_IMAGE),
                           fit: BoxFit.cover,
                         ),
                       ),
@@ -79,14 +79,14 @@ class SingleGroupDetail extends StatelessWidget {
                     width: 15,
                   ),
                   Text(
-                    snapshot[FirestoreConstants.GROUP_NAME],
+                    snapshot.get(FirestoreConstants.GROUP_NAME),
                     style: GoogleFonts.asap(fontSize: 18.0),
                   ),
                   Spacer(),
                   IconButton(
                     onPressed: () {
                       Get.bottomSheet(GroupDetailBottomSheet(
-                          snapshot[FirestoreConstants.GROUP_NAME]));
+                          snapshot.get(FirestoreConstants.GROUP_NAME)));
                     },
                     icon: Icon(
                       Icons.info_outline,

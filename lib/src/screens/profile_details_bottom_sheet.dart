@@ -17,19 +17,19 @@ class ProfileDetailsBottomSheet extends StatelessWidget {
         backgroundColor: Theme.of(context).backgroundColor,
         leading: CloseButton(),
         title: Text(
-          snapshot[FirestoreConstants.USER_NAME],
+          snapshot.get(FirestoreConstants.USER_NAME),
           style: GoogleFonts.asap(),
         ),
       ),
       body: Container(
         width: double.infinity,
         child: FutureBuilder(
-          future: Firestore.instance
+          future: FirebaseFirestore.instance
               .collection(FirestoreConstants.USER)
-              .document(snapshot[FirestoreConstants.MESSAGE_BY])
+              .doc(snapshot.get(FirestoreConstants.MESSAGE_BY))
               .collection(FirestoreConstants.GROUPS)
               .where(FirestoreConstants.IS_OWNER, isEqualTo: true)
-              .getDocuments(),
+              .get(),
           builder: (_, groupOwnerSnapshot) {
             if (groupOwnerSnapshot.connectionState == ConnectionState.waiting) {
               return CenterCircularProgressBar();
@@ -39,11 +39,11 @@ class ProfileDetailsBottomSheet extends StatelessWidget {
               groupOwner = groupOwnerSnapshot.data.documents.length;
             }
             return FutureBuilder(
-              future: Firestore.instance
+              future: FirebaseFirestore.instance
                   .collection(FirestoreConstants.USER)
-                  .document(snapshot[FirestoreConstants.MESSAGE_BY])
+                  .doc(snapshot.get(FirestoreConstants.MESSAGE_BY))
                   .collection(FirestoreConstants.GROUPS)
-                  .getDocuments(),
+                  .get(),
               builder: (_, groupJoinedSnapshot) {
                 if (groupJoinedSnapshot.connectionState ==
                     ConnectionState.waiting) {
@@ -66,7 +66,7 @@ class ProfileDetailsBottomSheet extends StatelessWidget {
                       child: ClipOval(
                         child: FadeInImage(
                           image: NetworkImage(
-                            snapshot[FirestoreConstants.USER_PROFILE_PIC],
+                            snapshot.get(FirestoreConstants.USER_PROFILE_PIC),
                           ),
                           placeholder: AssetImage(
                             "assets/default_profile.png",
@@ -75,7 +75,7 @@ class ProfileDetailsBottomSheet extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      snapshot[FirestoreConstants.USER_NAME],
+                      snapshot.get(FirestoreConstants.USER_NAME),
                       style: GoogleFonts.asap(
                         fontSize: 20,
                       ),
@@ -84,7 +84,7 @@ class ProfileDetailsBottomSheet extends StatelessWidget {
                       height: 30.0,
                     ),
                     ProfileGroupDetails(groupOwner, groupJoined,
-                        snapshot[FirestoreConstants.MESSAGE_BY]),
+                        snapshot.get(FirestoreConstants.MESSAGE_BY)),
                   ],
                 );
               },

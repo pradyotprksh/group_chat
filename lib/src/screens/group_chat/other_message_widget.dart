@@ -30,7 +30,7 @@ class OtherMessageWidget extends StatelessWidget {
           ),
         ),
         child: Text(
-          "${snapshot[FirestoreConstants.MESSAGE]}",
+          "${snapshot.get(FirestoreConstants.MESSAGE)}",
           style: GoogleFonts.asap(),
         ),
       ),

@@ -12,7 +12,7 @@ import 'package:random_string/random_string.dart';
 
 class NewMessage extends StatelessWidget {
   final String groupName;
-  final FirebaseUser user;
+  final User user;
   final picker = ImagePicker();
 
   NewMessage(this.groupName, this.user);
@@ -44,19 +44,19 @@ class NewMessage extends StatelessWidget {
             final StorageTaskSnapshot downloadUrl =
                 (await uploadTask.onComplete);
             final String url = await downloadUrl.ref.getDownloadURL();
-            await Firestore.instance
+            await FirebaseFirestore.instance
                 .collection(FirestoreConstants.GROUPS)
-                .document(groupName)
+                .doc(groupName)
                 .collection(FirestoreConstants.MESSAGES)
-                .document()
-                .setData({
+                .doc()
+                .set({
               FirestoreConstants.MESSAGE_ON:
                   DateTime.now().millisecondsSinceEpoch,
               FirestoreConstants.MESSAGE_BY: user.uid,
               FirestoreConstants.MESSAGE: url,
               FirestoreConstants.IS_PICTURE_MESSAGE: true,
               FirestoreConstants.USER_NAME: "${user.displayName}",
-              FirestoreConstants.USER_PROFILE_PIC: "${user.photoUrl}",
+              FirestoreConstants.USER_PROFILE_PIC: "${user.photoURL}",
               FirestoreConstants.IMAGE_PATH: storageReference.path,
             });
           } catch (error) {
@@ -70,17 +70,19 @@ class NewMessage extends StatelessWidget {
     void _sendMessage() {
       if (_enteredMessage.trim().isNotEmpty) {
         _controller.clear();
-        Firestore.instance
+        FirebaseFirestore.instance
             .collection(FirestoreConstants.GROUPS)
-            .document(groupName)
+            .doc(groupName)
             .collection(FirestoreConstants.MESSAGES)
-            .document()
-            .setData({
-          FirestoreConstants.MESSAGE_ON: DateTime.now().millisecondsSinceEpoch,
+            .doc()
+            .set({
+          FirestoreConstants.MESSAGE_ON: DateTime
+              .now()
+              .millisecondsSinceEpoch,
           FirestoreConstants.MESSAGE_BY: user.uid,
           FirestoreConstants.MESSAGE: _enteredMessage,
           FirestoreConstants.USER_NAME: "${user.displayName}",
-          FirestoreConstants.USER_PROFILE_PIC: "${user.photoUrl}",
+          FirestoreConstants.USER_PROFILE_PIC: "${user.photoURL}",
         }).then((value) {
           _enteredMessage = "";
         });
