@@ -9,7 +9,6 @@ import 'package:group_chat/src/screens/group_detail_bottom_sheet/group_detail_bo
 import 'package:group_chat/src/util/firestore_constants.dart';
 import 'package:group_chat/src/util/string.dart';
 import 'package:group_chat/src/util/utility.dart';
-import 'package:group_chat/src/widget/center_circular_progressbar.dart';
 import 'package:group_chat/src/widget/center_text.dart';
 import 'package:group_chat/src/widget/shimmer_layout.dart';
 
@@ -41,7 +40,7 @@ class HomePage extends StatelessWidget {
               .snapshots(),
           builder: (_, groupSnapshot) {
             if (groupSnapshot.connectionState == ConnectionState.waiting)
-              return CenterCircularProgressBar();
+              return ShimmerLayout();
             var snapshot = groupSnapshot.data.documents;
             if (snapshot != null) {
               if (snapshot.length > 0) {
@@ -84,7 +83,8 @@ class HomePage extends StatelessWidget {
                                     Get.back();
                                     Get.bottomSheet(GroupDetailBottomSheet(
                                         groupDetailsSnapshot.data[
-                                            FirestoreConstants.GROUP_NAME]));
+                                            FirestoreConstants.GROUP_NAME],
+                                        true));
                                     Utility.showSnackBar(
                                         "You are not a member of this group. To chat in this group please send a request first",
                                         Colors.red);

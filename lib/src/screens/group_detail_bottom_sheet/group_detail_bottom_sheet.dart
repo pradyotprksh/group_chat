@@ -11,9 +11,10 @@ import 'package:group_chat/src/widget/center_text.dart';
 
 class GroupDetailBottomSheet extends StatelessWidget {
   final String groupName;
+  final bool allowClickAction;
   final GroupController _groupController = Get.find();
 
-  GroupDetailBottomSheet(this.groupName);
+  GroupDetailBottomSheet(this.groupName, this.allowClickAction);
 
   @override
   Widget build(BuildContext context) {
@@ -94,13 +95,13 @@ class GroupDetailBottomSheet extends StatelessWidget {
                                         Tooltip(
                                           message: "Go To Group",
                                           child: ListTile(
-                                            onTap: () async {
+                                            onTap: allowClickAction ? () async {
                                               Utility.showLoadingDialog(
                                                   "Opening Please Wait...");
                                               var isAllowed = await _groupController
                                                   .isUserJoinedTheGroup(snapshot
-                                                      .get(FirestoreConstants
-                                                          .GROUP_NAME));
+                                                  .get(FirestoreConstants
+                                                  .GROUP_NAME));
                                               if (isAllowed) {
                                                 Get.back();
                                                 Get.toNamed(
@@ -114,7 +115,7 @@ class GroupDetailBottomSheet extends StatelessWidget {
                                                     "You are not a member of this group. To chat in this group please send a request first",
                                                     Colors.red);
                                               }
-                                            },
+                                            } : null,
                                             leading: CircleAvatar(
                                               backgroundColor: Colors.white,
                                               child: Container(
@@ -129,10 +130,10 @@ class GroupDetailBottomSheet extends StatelessWidget {
                                                 ),
                                               ),
                                             ),
-                                            trailing: Icon(
+                                            trailing: allowClickAction ? Icon(
                                               Icons.arrow_right,
                                               color: Colors.white,
-                                            ),
+                                            ) : null,
                                             title: Text(
                                               snapshot.get(FirestoreConstants
                                                   .GROUP_NAME),

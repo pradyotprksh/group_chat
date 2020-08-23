@@ -37,7 +37,7 @@ class SingleGroupDetail extends StatelessWidget {
           } else {
             Get.back();
             Get.bottomSheet(GroupDetailBottomSheet(
-                snapshot.get(FirestoreConstants.GROUP_NAME)));
+                snapshot.get(FirestoreConstants.GROUP_NAME), true));
             Utility.showSnackBar(
                 "You are not a member of this group. To chat in this group please send a request first",
                 Colors.red);
@@ -86,7 +86,7 @@ class SingleGroupDetail extends StatelessWidget {
                   IconButton(
                     onPressed: () {
                       Get.bottomSheet(GroupDetailBottomSheet(
-                          snapshot.get(FirestoreConstants.GROUP_NAME)));
+                          snapshot.get(FirestoreConstants.GROUP_NAME), true));
                     },
                     icon: Icon(
                       Icons.info_outline,

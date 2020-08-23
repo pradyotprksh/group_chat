@@ -65,6 +65,9 @@ class _GroupInvitesScreenState extends State<GroupInvitesScreen> {
             return CenterText("Not able to get your data. Please try again,");
           } else {
             var groupsInvite = groupsInviteSnapshot.data.documents;
+            if (groupsInvite.length == 0) {
+              return CenterText('No Invites/Request Yet.');
+            }
             return ListView.builder(
               shrinkWrap: true,
               itemCount: groupsInvite.length,

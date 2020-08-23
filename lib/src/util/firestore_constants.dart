@@ -42,4 +42,11 @@ class FirestoreConstants {
   static const IMAGE_PATH = "image_path";
   static const REPLY_FOR = "reply_for";
   static const IS_REPLY_MESSAGE = "is_reply_message";
+  static const GAMES = "games";
+  static const SHOW_GAME = "show_game";
+  static const GAME_NAME = "game_name";
+  static const GAME_DESCRIPTION = "game_description";
+  static const GAME_POINTS = "game_points";
+  static const IS_SINGLE_PLAYER = "is_single_player";
+  static const NUMBER_OF_PLAYERS = "number_of_players";
 }
