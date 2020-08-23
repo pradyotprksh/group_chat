@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:group_chat/src/core/controller/game_controller.dart';
 import 'package:group_chat/src/screens/games/single_game_list.dart';
 import 'package:group_chat/src/util/firestore_constants.dart';
 import 'package:group_chat/src/widget/center_circular_progressbar.dart';
@@ -9,6 +10,7 @@ import 'package:group_chat/src/widget/center_text.dart';
 
 class MainGameScreen extends StatelessWidget {
   static const route_name = "main_game_screen";
+  final GameController _gameController = Get.put(GameController());
 
   @override
   Widget build(BuildContext context) {
@@ -44,7 +46,7 @@ class MainGameScreen extends StatelessWidget {
               itemCount: snapshot.length,
               itemBuilder: (_, position) {
                 DocumentSnapshot document = snapshot[position];
-                return SingleGameList(document);
+                return SingleGameList(document, Get.arguments);
               },
             );
           }
