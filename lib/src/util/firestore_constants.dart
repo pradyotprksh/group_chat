@@ -58,4 +58,11 @@ class FirestoreConstants {
   static const STEPS = "steps";
   static const STATE = "state";
   static const VALUE = "value";
+  static const PLAYER_0_USER_ID = "player_0_user_id";
+  static const PLAYER_0_USER_NAME = "player_0_user_name";
+  static const PLAYER_0_USER_PROFILE_PIC = "player_0_user_profile_pic";
+  static const PLAYER_1_USER_ID = "player_1_user_id";
+  static const PLAYER_1_USER_NAME = "player_1_user_name";
+  static const PLAYER_1_USER_PROFILE_PIC = "player_1_user_profile_pic";
+  static const START_ANIMATION = "start_animation";
 }

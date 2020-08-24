@@ -34,7 +34,15 @@ class SingleGameList extends StatelessWidget {
                 .then((value) {
               if (value != null && value) {
                 Get.toNamed(TicTacToeGameScreen.route_name,
-                    arguments: groupName);
+                        arguments: groupName)
+                    .then((value) {
+                  if (value != null && value) {
+                    Utility.showSnackBar(
+                      "Game Deleted Successfully.",
+                      Colors.green,
+                    );
+                  }
+                });
               } else {
                 Get.toNamed(CreateTicTacToeGame.route_name,
                         arguments: groupName)
