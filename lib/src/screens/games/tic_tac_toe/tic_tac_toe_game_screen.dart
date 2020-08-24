@@ -14,6 +14,7 @@ import 'package:material_design_icons_flutter/material_design_icons_flutter.dart
 class TicTacToeGameScreen extends StatelessWidget {
   static const route_name = "tic_tac_toe_game_screen";
   final GameController _gameController = Get.find();
+  final groupName = Get.arguments;
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +26,7 @@ class TicTacToeGameScreen extends StatelessWidget {
       body: StreamBuilder(
         stream: FirebaseFirestore.instance
             .collection(FirestoreConstants.GROUPS)
-            .doc(Get.arguments)
+            .doc(groupName)
             .collection(FirestoreConstants.GAMES)
             .doc(StringConstant.TIC_TAC_TOE)
             .collection(FirestoreConstants.CURRENT_GAMES)
@@ -124,48 +125,80 @@ class TicTacToeGameScreen extends StatelessWidget {
                         ),
                     ],
                   ),
-                  Spacer(),
                   if (document
                       .get(FirestoreConstants.PLAYERS)
                       .length == 1)
                     Padding(
                       padding: const EdgeInsets.all(15.0,),
-                      child: Text("You can start game until someone joins.",
+                      child: Text("You can't start game until someone joins.",
                         textAlign: TextAlign.center,
                         style: GoogleFonts.asap(fontStyle: FontStyle.italic),),
                     ),
+                  Spacer(),
                   GridView.builder(
                     shrinkWrap: true,
                     itemCount: steps.length,
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 3,
                       childAspectRatio: 1.0,
-                      crossAxisSpacing: 9.0,
-                      mainAxisSpacing: 9.0,),
+                      crossAxisSpacing: 15.0,
+                      mainAxisSpacing: 15.0,
+                    ),
                     itemBuilder: (_, position) {
                       var singleStep = steps[position];
                       return ShakeAnimatedWidget(
                         enabled: singleStep[FirestoreConstants.START_ANIMATION],
-                        duration: Duration(milliseconds: 1500),
-                        shakeAngle: Rotation.deg(z: 5,),
+                        duration: Duration(milliseconds: 1000),
+                        shakeAngle: Rotation.deg(
+                          z: 5,
+                        ),
                         curve: Curves.linear,
                         child: RaisedButton(
                           onPressed: (document
                               .get(FirestoreConstants.PLAYERS)
-                              .length != 1) ? null : () {
-                            _gameController.updateGame(document, position,
+                              .length ==
+                              1)
+                              ? null
+                              : () {
+                            _gameController.updateGame(
+                                document,
+                                position,
                                 FirebaseAuth.instance.currentUser.uid ==
-                                    document.get(FirestoreConstants.CREATED_BY)
+                                    document.get(
+                                        FirestoreConstants.CREATED_BY)
                                     ? "X"
                                     : "O");
                           },
+                          color: singleStep[FirestoreConstants.START_ANIMATION]
+                              ? Colors.green
+                              : Theme
+                              .of(context)
+                              .primaryColor,
                           child: singleStep[FirestoreConstants.STATE]
                               ? singleStep[FirestoreConstants.VALUE] == "X"
-                              ? Text("X", style: GoogleFonts.asap(
-                            fontSize: 100, fontWeight: FontWeight.bold,),)
-                              : Text("O", style: GoogleFonts.asap(
-                            fontSize: 100, fontWeight: FontWeight.bold,),)
-                              : Icon(MdiIcons.cursorPointer, size: 100,),
+                              ? Text(
+                            "X",
+                            style: GoogleFonts.asap(
+                              fontSize: 100,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          )
+                              : Text(
+                            "O",
+                            style: GoogleFonts.asap(
+                              fontSize: 100,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          )
+                              : Icon(
+                            MdiIcons.cursorPointer,
+                            size: 100,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(
+                              20.0,
+                            ),
+                          ),
                         ),
                       );
                     },

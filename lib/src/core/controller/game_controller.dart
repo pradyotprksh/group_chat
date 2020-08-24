@@ -30,8 +30,10 @@ class GameController extends GetxController {
       FirestoreConstants.PLAYER_1_USER_NAME: "",
       FirestoreConstants.PLAYER_1_USER_PROFILE_PIC: "",
       FirestoreConstants.CREATED_ON: DateTime.now().millisecondsSinceEpoch,
+      FirestoreConstants.STARTED_ON: 0,
       FirestoreConstants.WINNER: "",
       FirestoreConstants.IS_GAME_ENDED: false,
+      FirestoreConstants.IS_GAME_DRAW: false,
       FirestoreConstants.CURRENT_PLAYER: FirebaseAuth.instance.currentUser.uid,
       FirestoreConstants.STEPS: [
         {
@@ -82,7 +84,10 @@ class GameController extends GetxController {
       ]
     });
     Get.back();
-    Get.back(result: true);
+    Get.back();
+    Utility.showSnackBar(
+        "Successfully created game. Waiting for someone to join...",
+        Colors.green);
   }
 
   Future<bool> findIfAnyActiveTicTacToeGame(String groupName) async {
@@ -131,9 +136,155 @@ class GameController extends GetxController {
       FirestoreConstants.START_ANIMATION: false
     };
     steps[position] = updateItem;
+
+    /*
+    * 0 1 2
+    * 3 4 5
+    * 6 7 8
+    *
+    * 0 3 6
+    * 1 4 7
+    * 2 5 8
+    *
+    * 0 4 8
+    * 2 4 6
+    * */
+
+    bool isGameWinnerDecided = false;
+    bool isGameDraw = false;
+
+    // 0 1 2
+    if (steps[0][FirestoreConstants.STATE] &&
+        steps[1][FirestoreConstants.STATE] &&
+        steps[2][FirestoreConstants.STATE]) {
+      if (steps[0][FirestoreConstants.VALUE] == value &&
+          steps[1][FirestoreConstants.VALUE] == value &&
+          steps[2][FirestoreConstants.VALUE] == value) {
+        isGameWinnerDecided = true;
+        steps[0][FirestoreConstants.START_ANIMATION] = true;
+        steps[1][FirestoreConstants.START_ANIMATION] = true;
+        steps[2][FirestoreConstants.START_ANIMATION] = true;
+      }
+    }
+
+    // 3 4 5
+    if (steps[3][FirestoreConstants.STATE] &&
+        steps[4][FirestoreConstants.STATE] &&
+        steps[5][FirestoreConstants.STATE]) {
+      if (steps[3][FirestoreConstants.VALUE] == value &&
+          steps[4][FirestoreConstants.VALUE] == value &&
+          steps[5][FirestoreConstants.VALUE] == value) {
+        isGameWinnerDecided = true;
+        steps[3][FirestoreConstants.START_ANIMATION] = true;
+        steps[4][FirestoreConstants.START_ANIMATION] = true;
+        steps[5][FirestoreConstants.START_ANIMATION] = true;
+      }
+    }
+
+    // 6 7 8
+    if (steps[6][FirestoreConstants.STATE] &&
+        steps[7][FirestoreConstants.STATE] &&
+        steps[8][FirestoreConstants.STATE]) {
+      if (steps[6][FirestoreConstants.VALUE] == value &&
+          steps[7][FirestoreConstants.VALUE] == value &&
+          steps[8][FirestoreConstants.VALUE] == value) {
+        isGameWinnerDecided = true;
+        steps[6][FirestoreConstants.START_ANIMATION] = true;
+        steps[7][FirestoreConstants.START_ANIMATION] = true;
+        steps[8][FirestoreConstants.START_ANIMATION] = true;
+      }
+    }
+
+    // 0 3 6
+    if (steps[0][FirestoreConstants.STATE] &&
+        steps[3][FirestoreConstants.STATE] &&
+        steps[6][FirestoreConstants.STATE]) {
+      if (steps[0][FirestoreConstants.VALUE] == value &&
+          steps[3][FirestoreConstants.VALUE] == value &&
+          steps[6][FirestoreConstants.VALUE] == value) {
+        isGameWinnerDecided = true;
+        steps[0][FirestoreConstants.START_ANIMATION] = true;
+        steps[3][FirestoreConstants.START_ANIMATION] = true;
+        steps[6][FirestoreConstants.START_ANIMATION] = true;
+      }
+    }
+
+    // 1 4 7
+    if (steps[1][FirestoreConstants.STATE] &&
+        steps[4][FirestoreConstants.STATE] &&
+        steps[7][FirestoreConstants.STATE]) {
+      if (steps[1][FirestoreConstants.VALUE] == value &&
+          steps[4][FirestoreConstants.VALUE] == value &&
+          steps[7][FirestoreConstants.VALUE] == value) {
+        isGameWinnerDecided = true;
+        steps[1][FirestoreConstants.START_ANIMATION] = true;
+        steps[4][FirestoreConstants.START_ANIMATION] = true;
+        steps[7][FirestoreConstants.START_ANIMATION] = true;
+      }
+    }
+
+    // 2 5 8
+    if (steps[2][FirestoreConstants.STATE] &&
+        steps[5][FirestoreConstants.STATE] &&
+        steps[8][FirestoreConstants.STATE]) {
+      if (steps[2][FirestoreConstants.VALUE] == value &&
+          steps[5][FirestoreConstants.VALUE] == value &&
+          steps[8][FirestoreConstants.VALUE] == value) {
+        isGameWinnerDecided = true;
+        steps[2][FirestoreConstants.START_ANIMATION] = true;
+        steps[5][FirestoreConstants.START_ANIMATION] = true;
+        steps[8][FirestoreConstants.START_ANIMATION] = true;
+      }
+    }
+
+    // 0 4 8
+    if (steps[0][FirestoreConstants.STATE] &&
+        steps[4][FirestoreConstants.STATE] &&
+        steps[8][FirestoreConstants.STATE]) {
+      if (steps[0][FirestoreConstants.VALUE] == value &&
+          steps[4][FirestoreConstants.VALUE] == value &&
+          steps[8][FirestoreConstants.VALUE] == value) {
+        isGameWinnerDecided = true;
+        steps[0][FirestoreConstants.START_ANIMATION] = true;
+        steps[4][FirestoreConstants.START_ANIMATION] = true;
+        steps[8][FirestoreConstants.START_ANIMATION] = true;
+      }
+    }
+
+    // 2 4 6
+    if (steps[2][FirestoreConstants.STATE] &&
+        steps[4][FirestoreConstants.STATE] &&
+        steps[6][FirestoreConstants.STATE]) {
+      if (steps[2][FirestoreConstants.VALUE] == value &&
+          steps[4][FirestoreConstants.VALUE] == value &&
+          steps[6][FirestoreConstants.VALUE] == value) {
+        isGameWinnerDecided = true;
+        steps[2][FirestoreConstants.START_ANIMATION] = true;
+        steps[4][FirestoreConstants.START_ANIMATION] = true;
+        steps[6][FirestoreConstants.START_ANIMATION] = true;
+      }
+    }
+
+    if (steps[0][FirestoreConstants.STATE] &&
+        steps[1][FirestoreConstants.STATE] &&
+        steps[2][FirestoreConstants.STATE] &&
+        steps[3][FirestoreConstants.STATE] &&
+        steps[4][FirestoreConstants.STATE] &&
+        steps[5][FirestoreConstants.STATE] &&
+        steps[6][FirestoreConstants.STATE] &&
+        steps[7][FirestoreConstants.STATE] &&
+        steps[8][FirestoreConstants.STATE]) {
+      if (!isGameWinnerDecided)
+        isGameDraw = true;
+    }
+
     FirebaseFirestore.instance
         .doc(document.reference.path).update({
-      FirestoreConstants.STEPS: steps
+      FirestoreConstants.STEPS: steps,
+      FirestoreConstants.IS_GAME_ENDED: isGameWinnerDecided,
+      FirestoreConstants.IS_GAME_DRAW: isGameDraw,
+      FirestoreConstants.WINNER: isGameWinnerDecided ? FirebaseAuth.instance
+          .currentUser.uid : "",
     });
   }
 }

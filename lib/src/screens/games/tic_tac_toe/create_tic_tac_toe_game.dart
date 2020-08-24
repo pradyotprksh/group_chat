@@ -6,6 +6,7 @@ import 'package:group_chat/src/core/controller/game_controller.dart';
 class CreateTicTacToeGame extends StatelessWidget {
   static const route_name = "create_tic_tac_toe_game";
   final GameController _gameController = Get.find();
+  final groupName = Get.arguments;
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +35,7 @@ class CreateTicTacToeGame extends StatelessWidget {
             Spacer(),
             RaisedButton(
               onPressed: () {
-                _gameController.createATicTacToeGame(Get.arguments);
+                _gameController.createATicTacToeGame(groupName);
               },
               child: Text(
                 'Create Game',

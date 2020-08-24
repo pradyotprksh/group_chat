@@ -54,10 +54,12 @@ class FirestoreConstants {
   static const PLAYERS_DETAILS = "players_details";
   static const WINNER = "winner";
   static const IS_GAME_ENDED = "is_game_ended";
+  static const IS_GAME_DRAW = "is_game_draw";
   static const CURRENT_PLAYER = "current_player";
   static const STEPS = "steps";
   static const STATE = "state";
   static const VALUE = "value";
+  static const STARTED_ON = "started_on";
   static const PLAYER_0_USER_ID = "player_0_user_id";
   static const PLAYER_0_USER_NAME = "player_0_user_name";
   static const PLAYER_0_USER_PROFILE_PIC = "player_0_user_profile_pic";

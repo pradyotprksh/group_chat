@@ -2,17 +2,13 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:group_chat/src/core/controller/game_controller.dart';
-import 'package:group_chat/src/screens/games/tic_tac_toe/create_tic_tac_toe_game.dart';
-import 'package:group_chat/src/screens/games/tic_tac_toe/tic_tac_toe_game_screen.dart';
+import 'package:group_chat/src/screens/games/tic_tac_toe/tic_tac_toe_game_list.dart';
 import 'package:group_chat/src/util/firestore_constants.dart';
 import 'package:group_chat/src/util/string.dart';
-import 'package:group_chat/src/util/utility.dart';
 
 class SingleGameList extends StatelessWidget {
   final DocumentSnapshot document;
   final String groupName;
-  final GameController _gameController = Get.find();
 
   SingleGameList(this.document, this.groupName);
 
@@ -29,33 +25,7 @@ class SingleGameList extends StatelessWidget {
         onTap: () {
           if (name == StringConstant.MEMORY_CHECKER) {
           } else if (name == StringConstant.TIC_TAC_TOE) {
-            _gameController
-                .findIfAnyActiveTicTacToeGame(groupName)
-                .then((value) {
-              if (value != null && value) {
-                Get.toNamed(TicTacToeGameScreen.route_name,
-                        arguments: groupName)
-                    .then((value) {
-                  if (value != null && value) {
-                    Utility.showSnackBar(
-                      "Game Deleted Successfully.",
-                      Colors.green,
-                    );
-                  }
-                });
-              } else {
-                Get.toNamed(CreateTicTacToeGame.route_name,
-                        arguments: groupName)
-                    .then((value) {
-                  if (value != null && value) {
-                    Utility.showSnackBar(
-                      "Game Created Successfully. Waiting for someone to join.",
-                      Colors.green,
-                    );
-                  }
-                });
-              }
-            });
+            Get.toNamed(TicTacToeGameList.route_name, arguments: groupName);
           }
         },
         leading: isSinglePlayer ? Icon(Icons.person) : Icon(Icons.group),

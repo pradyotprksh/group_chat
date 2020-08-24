@@ -9,6 +9,7 @@ import 'package:group_chat/src/screens/auth_screen.dart';
 import 'package:group_chat/src/screens/create_group.dart';
 import 'package:group_chat/src/screens/games/main_game_screen.dart';
 import 'package:group_chat/src/screens/games/tic_tac_toe/create_tic_tac_toe_game.dart';
+import 'package:group_chat/src/screens/games/tic_tac_toe/tic_tac_toe_game_list.dart';
 import 'package:group_chat/src/screens/games/tic_tac_toe/tic_tac_toe_game_screen.dart';
 import 'package:group_chat/src/screens/group_chat/group_chat_screen.dart';
 import 'package:group_chat/src/screens/group_list/group_invites/group_invites_screen.dart';
@@ -97,6 +98,12 @@ class MyApp extends StatelessWidget {
         GetPage(
           name: TicTacToeGameScreen.route_name,
           page: () => TicTacToeGameScreen(),
+          fullscreenDialog: true,
+          transition: Transition.rightToLeft,
+        ),
+        GetPage(
+          name: TicTacToeGameList.route_name,
+          page: () => TicTacToeGameList(),
           fullscreenDialog: true,
           transition: Transition.rightToLeft,
         ),
