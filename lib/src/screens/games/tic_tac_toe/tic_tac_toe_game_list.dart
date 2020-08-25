@@ -1,10 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:group_chat/src/core/controller/game_controller.dart';
 import 'package:group_chat/src/screens/games/tic_tac_toe/tic_tac_toe_game_screen.dart';
+import 'package:group_chat/src/screens/group_chat/circle_profile_image.dart';
 import 'package:group_chat/src/util/firestore_constants.dart';
 import 'package:group_chat/src/util/string.dart';
 import 'package:group_chat/src/util/utility.dart';
@@ -81,6 +83,113 @@ class TicTacToeGameList extends StatelessWidget {
                   child: Container(
                     padding: const EdgeInsets.all(
                       15.0,
+                    ),
+                    child: InkWell(
+                      onTap: () {
+                        Get.toNamed(TicTacToeGameScreen.route_name, arguments: {
+                          "groupName": groupName,
+                          "gameId": snapshot[position].id
+                        });
+                      },
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Expanded(
+                                child: ListTile(
+                                  leading: CircleProfileImage(
+                                    player0Image,
+                                  ),
+                                  title: Text(
+                                    player0Name,
+                                    style: GoogleFonts.asap(
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  subtitle: (currentPlayer ==
+                                          FirebaseAuth.instance.currentUser.uid)
+                                      ? Text(
+                                          "is playing...",
+                                          style: GoogleFonts.asap(
+                                            color: Colors.greenAccent,
+                                          ),
+                                        )
+                                      : Text(
+                                          "Waiting for $player1Name...",
+                                          style: GoogleFonts.asap(
+                                            color: Colors.redAccent,
+                                          ),
+                                        ),
+                                ),
+                              ),
+                              Text(
+                                "VS",
+                                style: GoogleFonts.share(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                              if (players.length == 2)
+                                Expanded(
+                                  child: ListTile(
+                                    trailing: CircleProfileImage(
+                                      player1Image,
+                                    ),
+                                    title: Text(
+                                      player1Name,
+                                      style: GoogleFonts.asap(
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    subtitle: (currentPlayer !=
+                                            FirebaseAuth
+                                                .instance.currentUser.uid)
+                                        ? Text(
+                                            "is thinking...",
+                                            style: GoogleFonts.asap(
+                                              color: Colors.greenAccent,
+                                            ),
+                                          )
+                                        : Text(
+                                            "is waiting...",
+                                            style: GoogleFonts.asap(
+                                              color: Colors.redAccent,
+                                            ),
+                                          ),
+                                  ),
+                                ),
+                              if (players.length == 1)
+                                Expanded(
+                                  child: Text(
+                                    'No Player Joined Yet',
+                                    textAlign: TextAlign.center,
+                                    style: GoogleFonts.asap(
+                                      color: Colors.redAccent,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                            ],
+                          ),
+                          if (players.length == 1 &&
+                              !players.contains(
+                                  FirebaseAuth.instance.currentUser.uid))
+                            RaisedButton(
+                              onPressed: () {},
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(
+                                  20.0,
+                                ),
+                              ),
+                              child: Text(
+                                "Join Match",
+                                style: GoogleFonts.asap(),
+                              ),
+                            ),
+                        ],
+                      ),
                     ),
                   ),
                 );

@@ -14,10 +14,13 @@ import 'package:material_design_icons_flutter/material_design_icons_flutter.dart
 class TicTacToeGameScreen extends StatelessWidget {
   static const route_name = "tic_tac_toe_game_screen";
   final GameController _gameController = Get.find();
-  final groupName = Get.arguments;
+  final arguments = Get.arguments as Map<String, dynamic>;
 
   @override
   Widget build(BuildContext context) {
+    final groupName = arguments["groupName"];
+    final gameId = arguments["gameId"];
+
     return Scaffold(
       backgroundColor: Theme.of(context).backgroundColor,
       appBar: AppBar(
@@ -30,8 +33,7 @@ class TicTacToeGameScreen extends StatelessWidget {
             .collection(FirestoreConstants.GAMES)
             .doc(StringConstant.TIC_TAC_TOE)
             .collection(FirestoreConstants.CURRENT_GAMES)
-            .where(FirestoreConstants.PLAYERS,
-            arrayContains: FirebaseAuth.instance.currentUser.uid)
+            .doc(gameId)
             .snapshots(),
         builder: (_, gameSnapshot) {
           if (gameSnapshot.connectionState == ConnectionState.waiting) {
@@ -39,11 +41,7 @@ class TicTacToeGameScreen extends StatelessWidget {
           } else if (gameSnapshot.data == null) {
             return CenterText('Not able to find the game');
           } else {
-            var snapshot = gameSnapshot.data.documents;
-            if (snapshot.length == 0) {
-              return CenterText('Not able to find the game');
-            }
-            DocumentSnapshot document = snapshot[0];
+            DocumentSnapshot document = gameSnapshot.data;
             var steps = document.get(FirestoreConstants.STEPS);
 
             return Padding(
@@ -73,7 +71,7 @@ class TicTacToeGameScreen extends StatelessWidget {
                             ),
                           )
                               : Text(
-                            "Waiting for ${document.get(
+                            "is waiting for ${document.get(
                                 FirestoreConstants.PLAYER_1_USER_NAME)}...",
                             style: GoogleFonts.asap(
                               color: Colors.redAccent,
@@ -98,13 +96,13 @@ class TicTacToeGameScreen extends StatelessWidget {
                                 FirestoreConstants.CURRENT_PLAYER) !=
                                 FirebaseAuth.instance.currentUser.uid)
                                 ? Text(
-                              "Is Thinking...",
+                              "is thinking...",
                               style: GoogleFonts.asap(
                                 color: Colors.greenAccent,
                               ),
                             )
                                 : Text(
-                              "Is Waiting...",
+                              "is waiting...",
                               style: GoogleFonts.asap(
                                 color: Colors.redAccent,
                               ),
