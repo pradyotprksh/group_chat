@@ -8,7 +8,6 @@ import 'package:get/get.dart';
 import 'package:group_chat/src/screens/auth_screen.dart';
 import 'package:group_chat/src/screens/create_group.dart';
 import 'package:group_chat/src/screens/games/main_game_screen.dart';
-import 'package:group_chat/src/screens/games/tic_tac_toe/create_tic_tac_toe_game.dart';
 import 'package:group_chat/src/screens/games/tic_tac_toe/tic_tac_toe_game_list.dart';
 import 'package:group_chat/src/screens/games/tic_tac_toe/tic_tac_toe_game_screen.dart';
 import 'package:group_chat/src/screens/group_chat/group_chat_screen.dart';
@@ -35,6 +34,15 @@ class MyApp extends StatelessWidget {
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       title: StringConstant.APP_NAME,
+      theme: ThemeData(
+        brightness: Brightness.dark,
+        primarySwatch: Colors.red,
+        primaryColor: Colors.red,
+        accentColor: Colors.redAccent,
+        backgroundColor: Colors.black,
+        accentColorBrightness: Brightness.dark,
+        visualDensity: VisualDensity.adaptivePlatformDensity,
+      ),
       darkTheme: ThemeData(
         brightness: Brightness.dark,
         primarySwatch: Colors.red,
@@ -86,12 +94,6 @@ class MyApp extends StatelessWidget {
         GetPage(
           name: ImagePreviewScreen.route_name,
           page: () => ImagePreviewScreen(),
-          fullscreenDialog: true,
-          transition: Transition.rightToLeft,
-        ),
-        GetPage(
-          name: CreateTicTacToeGame.route_name,
-          page: () => CreateTicTacToeGame(),
           fullscreenDialog: true,
           transition: Transition.rightToLeft,
         ),

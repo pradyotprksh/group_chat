@@ -49,7 +49,7 @@ class FirestoreConstants {
   static const GAME_POINTS = "game_points";
   static const IS_SINGLE_PLAYER = "is_single_player";
   static const NUMBER_OF_PLAYERS = "number_of_players";
-  static const CURRENT_GAMES = "current_games";
+  static const GAMES_LIST = "games_list";
   static const PLAYERS = "players";
   static const PLAYERS_DETAILS = "players_details";
   static const WINNER = "winner";

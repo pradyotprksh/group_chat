@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:group_chat/src/screens/games/tic_tac_toe/tic_tac_toe_game_screen.dart';
 import 'package:group_chat/src/util/firestore_constants.dart';
 import 'package:group_chat/src/util/string.dart';
 import 'package:group_chat/src/util/utility.dart';
@@ -15,7 +16,7 @@ class GameController extends GetxController {
         .doc(groupName)
         .collection(FirestoreConstants.GAMES)
         .doc(StringConstant.TIC_TAC_TOE)
-        .collection(FirestoreConstants.CURRENT_GAMES)
+        .collection(FirestoreConstants.GAMES_LIST)
         .doc()
         .set({
       FirestoreConstants.CREATED_BY: FirebaseAuth.instance.currentUser.uid,
@@ -90,22 +91,48 @@ class GameController extends GetxController {
         Colors.green);
   }
 
-  Future<bool> findIfAnyActiveTicTacToeGame(String groupName) async {
+  void findIfAnyActiveTicTacToeGame(String groupName) async {
     Utility.showLoadingDialog("Checking something");
     var currentGames = await FirebaseFirestore.instance
         .collection(FirestoreConstants.GROUPS)
         .doc(groupName)
         .collection(FirestoreConstants.GAMES)
         .doc(StringConstant.TIC_TAC_TOE)
-        .collection(FirestoreConstants.CURRENT_GAMES)
+        .collection(FirestoreConstants.GAMES_LIST)
         .where(FirestoreConstants.PLAYERS,
-        arrayContains: FirebaseAuth.instance.currentUser.uid)
+            arrayContains: FirebaseAuth.instance.currentUser.uid)
+        .where(FirestoreConstants.IS_GAME_ENDED, isEqualTo: false)
         .get();
     Get.back();
     if (currentGames.docs.length > 0) {
-      return true;
+      Get.toNamed(TicTacToeGameScreen.route_name, arguments: {
+        "groupName": groupName,
+        "gameId": currentGames.docs[0].id
+      }).then((value) {
+        if (value != null && value) {
+          Utility.showSnackBar(
+            "Game Deleted Successfully.",
+            Colors.green,
+          );
+        }
+      });
+    } else {
+      Get.defaultDialog(
+        title: "Alert",
+        content: Text(
+          'Create A Game?',
+          style: GoogleFonts.asap(
+            color: Colors.white,
+          ),
+        ),
+        textCancel: "Nope",
+        textConfirm: "Yes",
+        confirmTextColor: Colors.white,
+        onConfirm: () {
+          createATicTacToeGame(groupName);
+        },
+      );
     }
-    return false;
   }
 
   void deleteGame(DocumentSnapshot document) async {
@@ -128,7 +155,8 @@ class GameController extends GetxController {
     );
   }
 
-  void updateGame(DocumentSnapshot document, int position, String value) {
+  void updateGame(DocumentSnapshot document, int position, String value) async {
+    Utility.showLoadingDialog("Updating Game...");
     var steps = document.get(FirestoreConstants.STEPS);
     var updateItem = {
       FirestoreConstants.STATE: true,
@@ -274,17 +302,66 @@ class GameController extends GetxController {
         steps[6][FirestoreConstants.STATE] &&
         steps[7][FirestoreConstants.STATE] &&
         steps[8][FirestoreConstants.STATE]) {
-      if (!isGameWinnerDecided)
+      if (!isGameWinnerDecided) {
         isGameDraw = true;
+        isGameWinnerDecided = true;
+        steps[0][FirestoreConstants.START_ANIMATION] = true;
+        steps[1][FirestoreConstants.START_ANIMATION] = true;
+        steps[2][FirestoreConstants.START_ANIMATION] = true;
+        steps[3][FirestoreConstants.START_ANIMATION] = true;
+        steps[4][FirestoreConstants.START_ANIMATION] = true;
+        steps[5][FirestoreConstants.START_ANIMATION] = true;
+        steps[6][FirestoreConstants.START_ANIMATION] = true;
+        steps[7][FirestoreConstants.START_ANIMATION] = true;
+        steps[8][FirestoreConstants.START_ANIMATION] = true;
+      }
     }
 
-    FirebaseFirestore.instance
+    if (isGameWinnerDecided) {
+
+    }
+
+    await FirebaseFirestore.instance
         .doc(document.reference.path).update({
       FirestoreConstants.STEPS: steps,
       FirestoreConstants.IS_GAME_ENDED: isGameWinnerDecided,
       FirestoreConstants.IS_GAME_DRAW: isGameDraw,
       FirestoreConstants.WINNER: isGameWinnerDecided ? FirebaseAuth.instance
           .currentUser.uid : "",
+      FirestoreConstants.CURRENT_PLAYER: (value == "X") ? document.get(
+          FirestoreConstants.PLAYERS)[1] : document.get(
+          FirestoreConstants.PLAYERS)[0],
+    });
+    Get.back();
+  }
+
+  void joinMatch(DocumentSnapshot snapshot, String groupName) async {
+    Utility.showLoadingDialog("Joining Match...");
+    await FirebaseFirestore.instance
+        .collection(FirestoreConstants.GROUPS)
+        .doc(groupName)
+        .collection(FirestoreConstants.GAMES)
+        .doc(StringConstant.TIC_TAC_TOE)
+        .collection(FirestoreConstants.GAMES_LIST)
+        .doc(snapshot.id).update({
+      FirestoreConstants.PLAYERS: [
+        snapshot.get(FirestoreConstants.PLAYERS)[0],
+        FirebaseAuth.instance.currentUser.uid
+      ],
+      FirestoreConstants.PLAYER_1_USER_ID: FirebaseAuth.instance.currentUser
+          .uid,
+      FirestoreConstants.PLAYER_1_USER_NAME: FirebaseAuth.instance.currentUser
+          .displayName,
+      FirestoreConstants.PLAYER_1_USER_PROFILE_PIC: FirebaseAuth.instance
+          .currentUser.photoURL,
+      FirestoreConstants.STARTED_ON: DateTime
+          .now()
+          .millisecondsSinceEpoch,
+    });
+    Get.back();
+    Get.toNamed(TicTacToeGameScreen.route_name, arguments: {
+      "groupName": groupName,
+      "gameId": snapshot.id
     });
   }
 }
