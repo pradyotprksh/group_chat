@@ -60,6 +60,7 @@ class FirestoreConstants {
   static const STATE = "state";
   static const VALUE = "value";
   static const STARTED_ON = "started_on";
+  static const GAME_ENDED_ON = "game_ended_on";
   static const PLAYER_0_USER_ID = "player_0_user_id";
   static const PLAYER_0_USER_NAME = "player_0_user_name";
   static const PLAYER_0_USER_PROFILE_PIC = "player_0_user_profile_pic";
@@ -67,4 +68,5 @@ class FirestoreConstants {
   static const PLAYER_1_USER_NAME = "player_1_user_name";
   static const PLAYER_1_USER_PROFILE_PIC = "player_1_user_profile_pic";
   static const START_ANIMATION = "start_animation";
+  static const GAME_HISTORY = "game_history";
 }

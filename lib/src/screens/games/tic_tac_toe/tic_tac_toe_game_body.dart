@@ -13,9 +13,10 @@ import 'package:material_design_icons_flutter/material_design_icons_flutter.dart
 
 class TicTacToeGameBody extends StatelessWidget {
   final DocumentSnapshot document;
+  final String groupName;
   final GameController _gameController = Get.find();
 
-  TicTacToeGameBody(this.document);
+  TicTacToeGameBody(this.document, this.groupName);
 
   @override
   Widget build(BuildContext context) {
@@ -62,25 +63,32 @@ class TicTacToeGameBody extends StatelessWidget {
                 child: RaisedButton(
                   onPressed: () {
                     if (!document.get(FirestoreConstants.IS_GAME_ENDED)) {
-                      if (document.get(FirestoreConstants.CURRENT_PLAYER) ==
-                          FirebaseAuth.instance.currentUser.uid) {
-                        var steps = document.get(FirestoreConstants.STEPS);
-                        if (!steps[position][FirestoreConstants.STATE]) {
-                          _gameController.updateGame(
-                              document,
-                              position,
-                              FirebaseAuth.instance.currentUser.uid ==
-                                      document
-                                          .get(FirestoreConstants.CREATED_BY)
-                                  ? "X"
-                                  : "O");
+                      if (document.get(FirestoreConstants.PLAYERS).length ==
+                          2) {
+                        if (document.get(FirestoreConstants.CURRENT_PLAYER) ==
+                            FirebaseAuth.instance.currentUser.uid) {
+                          var steps = document.get(FirestoreConstants.STEPS);
+                          if (!steps[position][FirestoreConstants.STATE]) {
+                            _gameController.updateGame(
+                                document,
+                                groupName,
+                                position,
+                                FirebaseAuth.instance.currentUser.uid ==
+                                        document
+                                            .get(FirestoreConstants.CREATED_BY)
+                                    ? "X"
+                                    : "O");
+                          } else {
+                            Utility.showSnackBar(
+                                "Place already Taken...", Colors.red);
+                          }
                         } else {
                           Utility.showSnackBar(
-                              "Place already Taken...", Colors.red);
+                              "Its not your turn...", Colors.red);
                         }
                       } else {
                         Utility.showSnackBar(
-                            "Its not your turn...", Colors.red);
+                            "No one has joined the match yet...", Colors.red);
                       }
                     } else {
                       if (document.get(FirestoreConstants.IS_GAME_DRAW)) {

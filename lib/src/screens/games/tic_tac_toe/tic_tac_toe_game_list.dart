@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:group_chat/src/core/controller/game_controller.dart';
+import 'package:group_chat/src/screens/games/tic_tac_toe/history/tic_tac_toe_game_history.dart';
 import 'package:group_chat/src/screens/games/tic_tac_toe/tic_tac_toe_single_game_list.dart';
 import 'package:group_chat/src/util/firestore_constants.dart';
 import 'package:group_chat/src/util/string.dart';
@@ -23,7 +24,9 @@ class TicTacToeGameList extends StatelessWidget {
         title: Text("${StringConstant.TIC_TAC_TOE} Active Games"),
         actions: [
           IconButton(
-            onPressed: () {},
+            onPressed: () {
+              Get.bottomSheet(TicTacToeGameHistory(groupName));
+            },
             icon: Icon(
               Icons.history,
             ),

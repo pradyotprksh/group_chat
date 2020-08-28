@@ -37,7 +37,7 @@ class TicTacToeGameScreen extends StatelessWidget {
             return CenterText('Not able to find the game');
           } else {
             DocumentSnapshot document = gameSnapshot.data;
-            return TicTacToeGameBody(document);
+            return TicTacToeGameBody(document, groupName);
           }
         },
       ),

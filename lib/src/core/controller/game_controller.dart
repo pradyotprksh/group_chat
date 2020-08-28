@@ -155,7 +155,8 @@ class GameController extends GetxController {
     );
   }
 
-  void updateGame(DocumentSnapshot document, int position, String value) async {
+  void updateGame(DocumentSnapshot document, String groupName, int position,
+      String value) async {
     Utility.showLoadingDialog("Updating Game...");
     var steps = document.get(FirestoreConstants.STEPS);
     var updateItem = {
@@ -317,21 +318,24 @@ class GameController extends GetxController {
       }
     }
 
-    if (isGameWinnerDecided) {
-
-    }
-
-    await FirebaseFirestore.instance
-        .doc(document.reference.path).update({
+    var gameHistoryData = {
       FirestoreConstants.STEPS: steps,
       FirestoreConstants.IS_GAME_ENDED: isGameWinnerDecided,
       FirestoreConstants.IS_GAME_DRAW: isGameDraw,
-      FirestoreConstants.WINNER: isGameWinnerDecided ? FirebaseAuth.instance
-          .currentUser.uid : "",
-      FirestoreConstants.CURRENT_PLAYER: (value == "X") ? document.get(
-          FirestoreConstants.PLAYERS)[1] : document.get(
-          FirestoreConstants.PLAYERS)[0],
-    });
+      FirestoreConstants.WINNER:
+          isGameWinnerDecided ? FirebaseAuth.instance.currentUser.uid : "",
+      FirestoreConstants.CURRENT_PLAYER: (value == "X")
+          ? document.get(FirestoreConstants.PLAYERS)[1]
+          : document.get(FirestoreConstants.PLAYERS)[0],
+    };
+    if (isGameWinnerDecided) {
+      gameHistoryData[FirestoreConstants.GAME_ENDED_ON] =
+          DateTime.now().millisecondsSinceEpoch;
+    }
+
+    await FirebaseFirestore.instance
+        .doc(document.reference.path)
+        .update(gameHistoryData);
     Get.back();
   }
 
