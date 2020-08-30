@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:group_chat/src/screens/group_chat/game_message_widget.dart';
 import 'package:group_chat/src/screens/group_chat/image_message.dart';
 import 'package:group_chat/src/screens/group_chat/message.dart';
 import 'package:group_chat/src/screens/group_chat/other_message_widget.dart';
@@ -47,21 +48,28 @@ class Messages extends StatelessWidget {
               DocumentSnapshot document = snapshot[position];
               bool isMe =
                   user.uid == document.get(FirestoreConstants.MESSAGE_BY);
-              if ((document.data().containsKey(
-                  FirestoreConstants.IS_CREATED_MESSAGE) &&
-                  document.get(FirestoreConstants.IS_CREATED_MESSAGE)) ||
-                  (document.data().containsKey(
-                      FirestoreConstants.IS_JOINED_MESSAGE) &&
+              if ((document
+                          .data()
+                          .containsKey(FirestoreConstants.IS_CREATED_MESSAGE) &&
+                      document.get(FirestoreConstants.IS_CREATED_MESSAGE)) ||
+                  (document
+                          .data()
+                          .containsKey(FirestoreConstants.IS_JOINED_MESSAGE) &&
                       document.get(FirestoreConstants.IS_JOINED_MESSAGE))) {
                 return OtherMessageWidget(document);
-              } else if (document.data().containsKey(
-                  FirestoreConstants.IS_PICTURE_MESSAGE) &&
+              } else if (document
+                      .data()
+                      .containsKey(FirestoreConstants.IS_PICTURE_MESSAGE) &&
                   document.get(FirestoreConstants.IS_PICTURE_MESSAGE)) {
                 return ImageMessage(isMe, document, mediaQuery.width);
+              } else if (document
+                      .data()
+                      .containsKey(FirestoreConstants.IS_GAME_MESSAGE) &&
+                  document.get(FirestoreConstants.IS_GAME_MESSAGE)) {
+                return GameMessageWidget(document, groupName);
               } else {
                 return Message(
-                    isMe, document, mediaQuery.width, groupName,
-                    user);
+                    isMe, document, mediaQuery.width, groupName, user);
               }
             },
           );

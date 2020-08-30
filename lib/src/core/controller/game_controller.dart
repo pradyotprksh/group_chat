@@ -84,6 +84,23 @@ class GameController extends GetxController {
         },
       ]
     });
+    await FirebaseFirestore.instance
+        .collection(FirestoreConstants.GROUPS)
+        .doc(StringConstant.APP_NAME)
+        .collection(FirestoreConstants.MESSAGES)
+        .doc()
+        .set({
+      FirestoreConstants.MESSAGE_ON: DateTime.now().millisecondsSinceEpoch,
+      FirestoreConstants.IS_GAME_MESSAGE: true,
+      FirestoreConstants.GAME_NAME: StringConstant.TIC_TAC_TOE,
+      FirestoreConstants.MESSAGE_BY: FirebaseAuth.instance.currentUser.uid,
+      FirestoreConstants.MESSAGE:
+          "${FirebaseAuth.instance.currentUser.displayName} created a Tic-Tac-Toe game",
+      FirestoreConstants.USER_NAME:
+          "${FirebaseAuth.instance.currentUser.displayName}",
+      FirestoreConstants.USER_PROFILE_PIC:
+          "${FirebaseAuth.instance.currentUser.photoURL}",
+    });
     Get.back();
     Get.back();
     Utility.showSnackBar(
@@ -108,12 +125,13 @@ class GameController extends GetxController {
       Get.toNamed(TicTacToeGameScreen.route_name, arguments: {
         "groupName": groupName,
         "gameId": currentGames.docs[0].id
-      }).then((value) {
-        if (value != null && value) {
-          Utility.showSnackBar(
-            "Game Deleted Successfully.",
-            Colors.green,
-          );
+      }).then((value) async {
+        if (value != null) {
+          DocumentSnapshot document = value;
+          Utility.showLoadingDialog("Deleting game...");
+          await FirebaseFirestore.instance.doc(document.reference.path)
+              .delete();
+          Get.back();
         }
       });
     } else {
@@ -147,10 +165,7 @@ class GameController extends GetxController {
       textCancel: "No",
       onConfirm: () async {
         Get.back();
-        Utility.showLoadingDialog("Deleting game...");
-        await FirebaseFirestore.instance.doc(document.reference.path).delete();
-        Get.back();
-        Get.back(result: true);
+        Get.back(result: document);
       },
     );
   }
@@ -366,6 +381,13 @@ class GameController extends GetxController {
     Get.toNamed(TicTacToeGameScreen.route_name, arguments: {
       "groupName": groupName,
       "gameId": snapshot.id
+    }).then((value) async {
+      if (value != null) {
+        DocumentSnapshot document = value;
+        Future.delayed(const Duration(milliseconds: 100), () {
+          FirebaseFirestore.instance.doc(document.reference.path).delete();
+        });
+      }
     });
   }
 }

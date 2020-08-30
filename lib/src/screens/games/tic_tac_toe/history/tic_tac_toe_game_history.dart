@@ -59,6 +59,15 @@ class TicTacToeGameHistory extends StatelessWidget {
                     Get.toNamed(TicTacToeGameScreen.route_name, arguments: {
                       "groupName": groupName,
                       "gameId": snapshot.id
+                    }).then((value) async {
+                      if (value != null) {
+                        DocumentSnapshot document = value;
+                        Future.delayed(const Duration(milliseconds: 100), () {
+                          FirebaseFirestore.instance
+                              .doc(document.reference.path)
+                              .delete();
+                        });
+                      }
                     });
                   },
                   leading: Icon(

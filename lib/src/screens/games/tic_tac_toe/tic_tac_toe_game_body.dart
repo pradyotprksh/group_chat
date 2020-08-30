@@ -218,9 +218,10 @@ class TicTacToeGameBody extends StatelessWidget {
                 ),
               ),
             ),
-          if (document.get(FirestoreConstants.PLAYERS).length == 1 &&
-              FirebaseAuth.instance.currentUser.uid ==
-                  document.get(FirestoreConstants.CREATED_BY))
+          if (FirebaseAuth.instance.currentUser.uid ==
+                  document.get(FirestoreConstants.CREATED_BY) &&
+              (document.get(FirestoreConstants.PLAYERS).length == 1 ||
+                  document.get(FirestoreConstants.IS_GAME_ENDED)))
             RaisedButton(
               onPressed: () {
                 _gameController.deleteGame(document);

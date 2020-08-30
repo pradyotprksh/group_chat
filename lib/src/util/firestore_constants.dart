@@ -69,4 +69,5 @@ class FirestoreConstants {
   static const PLAYER_1_USER_PROFILE_PIC = "player_1_user_profile_pic";
   static const START_ANIMATION = "start_animation";
   static const GAME_HISTORY = "game_history";
+  static const IS_GAME_MESSAGE = "is_game_message";
 }
