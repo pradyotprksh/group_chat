@@ -83,7 +83,7 @@ class GroupController extends GetxController {
                 FirestoreConstants.USER_PROFILE_PIC: "${currentUser.photoURL}",
               }).then((value) {
                 updateLoading();
-                Get.back(result: groupName);
+                Get.back();
               });
             });
           });

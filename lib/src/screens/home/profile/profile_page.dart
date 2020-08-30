@@ -12,6 +12,7 @@ import 'package:group_chat/src/screens/create_group.dart';
 import 'package:group_chat/src/screens/home/profile/group_options.dart';
 import 'package:group_chat/src/screens/home/profile/other_options.dart';
 import 'package:group_chat/src/screens/home/profile/profile_group_details.dart';
+import 'package:group_chat/src/screens/home/profile/setting_options.dart';
 import 'package:group_chat/src/util/firestore_constants.dart';
 import 'package:group_chat/src/widget/center_circular_progressbar.dart';
 import 'package:group_chat/src/widget/center_text.dart';
@@ -130,6 +131,7 @@ class _ProfilePageState extends State<ProfilePage> {
                               GroupOptions(
                                   FirebaseAuth.instance.currentUser.uid),
                               Divider(),
+                              SettingOptions(),
                               if (Platform.isAndroid) OtherOptions(userData),
                               Divider(),
                               ListTile(

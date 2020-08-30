@@ -56,6 +56,7 @@ class AuthController extends GetxController {
       FirestoreConstants.USER_ID: user.uid,
       FirestoreConstants.USER_NAME: user.displayName,
       FirestoreConstants.USER_PROFILE_PIC: user.photoURL,
+      FirestoreConstants.GET_DAILY_NOTIFICATION: true,
     }).then((_) {
       // check if user is already in the group
       FirebaseFirestore.instance

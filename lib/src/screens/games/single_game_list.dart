@@ -17,7 +17,6 @@ class SingleGameList extends StatelessWidget {
     String name = document.get(FirestoreConstants.GAME_NAME);
     String description = document.get(FirestoreConstants.GAME_DESCRIPTION);
     bool isSinglePlayer = document.get(FirestoreConstants.IS_SINGLE_PLAYER);
-    int numberOfPlayers = document.get(FirestoreConstants.NUMBER_OF_PLAYERS);
     List gamePoints = document.get(FirestoreConstants.GAME_POINTS);
 
     return Card(
