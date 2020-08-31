@@ -3,14 +3,17 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:group_chat/src/screens/games/chess/chess_game_screen.dart';
 import 'package:group_chat/src/screens/games/tic_tac_toe/tic_tac_toe_game_screen.dart';
 import 'package:group_chat/src/util/firestore_constants.dart';
 import 'package:group_chat/src/util/string.dart';
 import 'package:group_chat/src/util/utility.dart';
+import 'package:random_string/random_string.dart';
 
 class GameController extends GetxController {
+  // Tic Tac Toe logic
   void createATicTacToeGame(String groupName) async {
-    Utility.showLoadingDialog("Create the game environment");
+    Utility.showLoadingDialog("Creating game environment");
     await FirebaseFirestore.instance
         .collection(FirestoreConstants.GROUPS)
         .doc(groupName)
@@ -379,9 +382,8 @@ class GameController extends GetxController {
     });
     Get.back();
     Get.toNamed(TicTacToeGameScreen.route_name, arguments: {
-      "groupName": groupName,
-      "gameId": snapshot.id
-    }).then((value) async {
+      "groupName": groupName, "gameId": snapshot.id})
+        .then((value) async {
       if (value != null) {
         DocumentSnapshot document = value;
         Future.delayed(const Duration(milliseconds: 100), () {
@@ -389,5 +391,105 @@ class GameController extends GetxController {
         });
       }
     });
+  }
+
+  // Chess logic
+  void findIfAnyActiveChessGame(String groupName) async {
+    Utility.showLoadingDialog("Checking something");
+    var currentGames = await FirebaseFirestore.instance
+        .collection(FirestoreConstants.GROUPS)
+        .doc(groupName)
+        .collection(FirestoreConstants.GAMES)
+        .doc(StringConstant.CHESS)
+        .collection(FirestoreConstants.GAMES_LIST)
+        .where(FirestoreConstants.PLAYERS,
+            arrayContains: FirebaseAuth.instance.currentUser.uid)
+        .where(FirestoreConstants.IS_GAME_ENDED, isEqualTo: false)
+        .get();
+    Get.back();
+    if (currentGames.docs.length > 0) {
+      Get.toNamed(ChessGameScreen.route_name, arguments: {
+        "groupName": groupName,
+        "gameId": currentGames.docs[0].id
+      }).then((value) async {
+        if (value != null) {
+          DocumentSnapshot document = value;
+          Utility.showLoadingDialog("Deleting game...");
+          await FirebaseFirestore.instance
+              .doc(document.reference.path)
+              .delete();
+          Get.back();
+        }
+      });
+    } else {
+      Get.defaultDialog(
+        title: "Alert",
+        content: Text(
+          'Create A Game?',
+          style: GoogleFonts.asap(
+            color: Colors.white,
+          ),
+        ),
+        textCancel: "Nope",
+        textConfirm: "Yes",
+        confirmTextColor: Colors.white,
+        onConfirm: () {
+          createAChess(groupName);
+        },
+      );
+    }
+  }
+
+  void createAChess(String groupName) async {
+    Utility.showLoadingDialog("Creating game environment");
+    await FirebaseFirestore.instance
+        .collection(FirestoreConstants.GROUPS)
+        .doc(groupName)
+        .collection(FirestoreConstants.GAMES)
+        .doc(StringConstant.CHESS)
+        .collection(FirestoreConstants.GAMES_LIST)
+        .doc()
+        .set({
+      FirestoreConstants.CREATED_BY: FirebaseAuth.instance.currentUser.uid,
+      FirestoreConstants.PLAYERS: [FirebaseAuth.instance.currentUser.uid],
+      FirestoreConstants.PLAYER_0_USER_ID:
+          FirebaseAuth.instance.currentUser.uid,
+      FirestoreConstants.PLAYER_0_USER_NAME:
+          FirebaseAuth.instance.currentUser.displayName,
+      FirestoreConstants.PLAYER_0_USER_PROFILE_PIC:
+          FirebaseAuth.instance.currentUser.photoURL,
+      FirestoreConstants.PLAYER_1_USER_ID: "",
+      FirestoreConstants.PLAYER_1_USER_NAME: "",
+      FirestoreConstants.PLAYER_1_USER_PROFILE_PIC: "",
+      FirestoreConstants.CREATED_ON: DateTime.now().millisecondsSinceEpoch,
+      FirestoreConstants.STARTED_ON: 0,
+      FirestoreConstants.WINNER: "",
+      FirestoreConstants.IS_GAME_ENDED: false,
+      FirestoreConstants.IS_GAME_DRAW: false,
+      FirestoreConstants.CURRENT_PLAYER: FirebaseAuth.instance.currentUser.uid,
+      FirestoreConstants.BOARD_TYPE: randomBetween(0, 3),
+    });
+    await FirebaseFirestore.instance
+        .collection(FirestoreConstants.GROUPS)
+        .doc(StringConstant.APP_NAME)
+        .collection(FirestoreConstants.MESSAGES)
+        .doc()
+        .set({
+      FirestoreConstants.MESSAGE_ON: DateTime.now().millisecondsSinceEpoch,
+      FirestoreConstants.IS_GAME_MESSAGE: true,
+      FirestoreConstants.GAME_NAME: StringConstant.CHESS,
+      FirestoreConstants.MESSAGE_BY: FirebaseAuth.instance.currentUser.uid,
+      FirestoreConstants.MESSAGE:
+          "${FirebaseAuth.instance.currentUser.displayName} created a Chess game",
+      FirestoreConstants.USER_NAME:
+          "${FirebaseAuth.instance.currentUser.displayName}",
+      FirestoreConstants.USER_PROFILE_PIC:
+          "${FirebaseAuth.instance.currentUser.photoURL}",
+    });
+    Get.back();
+    Get.back();
+    Utility.showSnackBar(
+        "Successfully created game. Waiting for someone to join...",
+        Colors.green);
   }
 }

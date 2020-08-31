@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:group_chat/src/util/firestore_constants.dart';
 
-class TicTacToeGamePlayers extends StatelessWidget {
+class GamePlayers extends StatelessWidget {
   final DocumentSnapshot document;
 
-  TicTacToeGamePlayers(this.document);
+  GamePlayers(this.document);
 
   @override
   Widget build(BuildContext context) {

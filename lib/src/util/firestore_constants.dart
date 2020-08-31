@@ -71,4 +71,5 @@ class FirestoreConstants {
   static const GAME_HISTORY = "game_history";
   static const IS_GAME_MESSAGE = "is_game_message";
   static const GET_DAILY_NOTIFICATION = "get_daily_notification";
+  static const BOARD_TYPE = "board_type";
 }

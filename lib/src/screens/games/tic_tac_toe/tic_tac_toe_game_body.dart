@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:group_chat/src/core/controller/game_controller.dart';
-import 'package:group_chat/src/screens/games/tic_tac_toe/tic_tac_toe_game_players.dart';
+import 'package:group_chat/src/screens/games/game_players.dart';
 import 'package:group_chat/src/util/firestore_constants.dart';
 import 'package:group_chat/src/util/utility.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
@@ -29,7 +29,7 @@ class TicTacToeGameBody extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          TicTacToeGamePlayers(document),
+          GamePlayers(document),
           if (document.get(FirestoreConstants.PLAYERS).length == 1)
             Padding(
               padding: const EdgeInsets.all(
@@ -41,6 +41,25 @@ class TicTacToeGameBody extends StatelessWidget {
                 style: GoogleFonts.asap(fontStyle: FontStyle.italic),
               ),
             ),
+          Padding(
+            padding: const EdgeInsets.all(
+              15.0,
+            ),
+            child: (document.get(FirestoreConstants.CREATED_BY) ==
+                    FirebaseAuth.instance.currentUser.uid)
+                ? Text(
+                    "You are X",
+                    textAlign: TextAlign.center,
+                    style: GoogleFonts.asap(
+                        fontWeight: FontWeight.bold, fontSize: 20),
+                  )
+                : Text(
+                    "You are O",
+                    textAlign: TextAlign.center,
+                    style: GoogleFonts.asap(
+                        fontWeight: FontWeight.bold, fontSize: 20),
+                  ),
+          ),
           Spacer(),
           GridView.builder(
             shrinkWrap: true,

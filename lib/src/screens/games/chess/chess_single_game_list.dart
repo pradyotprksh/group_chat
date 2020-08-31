@@ -4,17 +4,17 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:group_chat/src/core/controller/game_controller.dart';
+import 'package:group_chat/src/screens/games/chess/chess_game_screen.dart';
 import 'package:group_chat/src/screens/games/game_players.dart';
-import 'package:group_chat/src/screens/games/tic_tac_toe/tic_tac_toe_game_screen.dart';
 import 'package:group_chat/src/util/firestore_constants.dart';
 import 'package:group_chat/src/util/utility.dart';
 
-class TicTacToeSingleGameList extends StatelessWidget {
+class ChessSingleGameList extends StatelessWidget {
   final DocumentSnapshot snapshot;
   final String groupName;
   final GameController _gameController = Get.find();
 
-  TicTacToeSingleGameList(this.snapshot, this.groupName);
+  ChessSingleGameList(this.snapshot, this.groupName);
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +25,7 @@ class TicTacToeSingleGameList extends StatelessWidget {
       child: InkWell(
         onTap: () {
           if (players.contains(FirebaseAuth.instance.currentUser.uid)) {
-            Get.toNamed(TicTacToeGameScreen.route_name,
+            Get.toNamed(ChessGameScreen.route_name,
                 arguments: {"groupName": groupName, "gameId": snapshot.id});
           } else {
             Utility.showSnackBar(
@@ -61,7 +61,7 @@ class TicTacToeSingleGameList extends StatelessWidget {
                   onPressed: () {
                     if (players
                         .contains(FirebaseAuth.instance.currentUser.uid)) {
-                      Get.toNamed(TicTacToeGameScreen.route_name, arguments: {
+                      Get.toNamed(ChessGameScreen.route_name, arguments: {
                         "groupName": groupName,
                         "gameId": snapshot.id
                       }).then((value) async {

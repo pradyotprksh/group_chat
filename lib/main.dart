@@ -5,8 +5,12 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:group_chat/src/core/controller/game_controller.dart';
+import 'package:group_chat/src/core/controller/groups_controller.dart';
 import 'package:group_chat/src/screens/auth_screen.dart';
 import 'package:group_chat/src/screens/create_group.dart';
+import 'package:group_chat/src/screens/games/chess/chess_game_list.dart';
+import 'package:group_chat/src/screens/games/chess/chess_game_screen.dart';
 import 'package:group_chat/src/screens/games/main_game_screen.dart';
 import 'package:group_chat/src/screens/games/tic_tac_toe/tic_tac_toe_game_list.dart';
 import 'package:group_chat/src/screens/games/tic_tac_toe/tic_tac_toe_game_screen.dart';
@@ -21,6 +25,8 @@ import 'package:group_chat/src/util/string.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+  Get.put(GroupController());
+  Get.put(GameController());
   Crashlytics.instance.enableInDevMode = true;
   FlutterError.onError = Crashlytics.instance.recordFlutterError;
   runApp(MyApp());
@@ -94,6 +100,18 @@ class MyApp extends StatelessWidget {
         GetPage(
           name: ImagePreviewScreen.route_name,
           page: () => ImagePreviewScreen(),
+          fullscreenDialog: true,
+          transition: Transition.rightToLeft,
+        ),
+        GetPage(
+          name: ChessGameScreen.route_name,
+          page: () => ChessGameScreen(),
+          fullscreenDialog: true,
+          transition: Transition.rightToLeft,
+        ),
+        GetPage(
+          name: ChessGameList.route_name,
+          page: () => ChessGameList(),
           fullscreenDialog: true,
           transition: Transition.rightToLeft,
         ),

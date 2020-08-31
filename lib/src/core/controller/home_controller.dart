@@ -35,7 +35,7 @@ class HomeController extends GetxController {
         .get()
         .then((value) {
       if (value.get(FirestoreConstants.GET_DAILY_NOTIFICATION)) {
-        var time = Time(10, 0, 0);
+        var time = Time(22, 0, 0);
         var androidPlatformChannelSpecifics = AndroidNotificationDetails(
             StringConstant.APP_NAME,
             StringConstant.APP_NAME,
