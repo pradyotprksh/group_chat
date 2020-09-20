@@ -26,7 +26,17 @@ class TicTacToeSingleGameList extends StatelessWidget {
         onTap: () {
           if (players.contains(FirebaseAuth.instance.currentUser.uid)) {
             Get.toNamed(TicTacToeGameScreen.route_name,
-                arguments: {"groupName": groupName, "gameId": snapshot.id});
+                    arguments: {"groupName": groupName, "gameId": snapshot.id})
+                .then((value) async {
+              if (value != null) {
+                DocumentSnapshot document = value;
+                Future.delayed(const Duration(milliseconds: 1000), () {
+                  FirebaseFirestore.instance
+                      .doc(document.reference.path)
+                      .delete();
+                });
+              }
+            });
           } else {
             Utility.showSnackBar(
                 "You need to join as a player to see the status.", Colors.red);

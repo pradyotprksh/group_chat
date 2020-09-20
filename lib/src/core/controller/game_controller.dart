@@ -131,10 +131,9 @@ class GameController extends GetxController {
       }).then((value) async {
         if (value != null) {
           DocumentSnapshot document = value;
-          Utility.showLoadingDialog("Deleting game...");
-          await FirebaseFirestore.instance.doc(document.reference.path)
-              .delete();
-          Get.back();
+          Future.delayed(const Duration(milliseconds: 1000), () {
+            FirebaseFirestore.instance.doc(document.reference.path).delete();
+          });
         }
       });
     } else {
@@ -365,30 +364,31 @@ class GameController extends GetxController {
         .collection(FirestoreConstants.GAMES)
         .doc(StringConstant.TIC_TAC_TOE)
         .collection(FirestoreConstants.GAMES_LIST)
-        .doc(snapshot.id).update({
+        .doc(snapshot.id)
+        .update({
       FirestoreConstants.PLAYERS: [
         snapshot.get(FirestoreConstants.PLAYERS)[0],
         FirebaseAuth.instance.currentUser.uid
       ],
-      FirestoreConstants.PLAYER_1_USER_ID: FirebaseAuth.instance.currentUser
-          .uid,
-      FirestoreConstants.PLAYER_1_USER_NAME: FirebaseAuth.instance.currentUser
-          .displayName,
-      FirestoreConstants.PLAYER_1_USER_PROFILE_PIC: FirebaseAuth.instance
-          .currentUser.photoURL,
-      FirestoreConstants.STARTED_ON: DateTime
-          .now()
-          .millisecondsSinceEpoch,
+      FirestoreConstants.PLAYER_1_USER_ID:
+          FirebaseAuth.instance.currentUser.uid,
+      FirestoreConstants.PLAYER_1_USER_NAME:
+          FirebaseAuth.instance.currentUser.displayName,
+      FirestoreConstants.PLAYER_1_USER_PROFILE_PIC:
+          FirebaseAuth.instance.currentUser.photoURL,
+      FirestoreConstants.STARTED_ON: DateTime.now().millisecondsSinceEpoch,
     });
     Get.back();
-    Get.toNamed(TicTacToeGameScreen.route_name, arguments: {
-      "groupName": groupName, "gameId": snapshot.id})
+    Get.toNamed(TicTacToeGameScreen.route_name,
+            arguments: {"groupName": groupName, "gameId": snapshot.id})
         .then((value) async {
       if (value != null) {
-        DocumentSnapshot document = value;
-        Future.delayed(const Duration(milliseconds: 100), () {
-          FirebaseFirestore.instance.doc(document.reference.path).delete();
-        });
+        if (value != null) {
+          DocumentSnapshot document = value;
+          Future.delayed(const Duration(milliseconds: 1000), () {
+            FirebaseFirestore.instance.doc(document.reference.path).delete();
+          });
+        }
       }
     });
   }
