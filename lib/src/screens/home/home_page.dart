@@ -132,7 +132,7 @@ class HomePage extends StatelessWidget {
                         );
                       },
                     ),
-                    if (DateTime.now().hour == 22)
+                    /*if (DateTime.now().hour == 22)
                       Align(
                         alignment: Alignment.bottomCenter,
                         child: Container(
@@ -152,7 +152,7 @@ class HomePage extends StatelessWidget {
                             ),
                           ),
                         ),
-                      ),
+                      ),*/
                   ],
                 );
               } else {
