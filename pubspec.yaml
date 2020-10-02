@@ -16,19 +16,19 @@ dependencies:
 
   firebase_core: ^0.5.0
 
-  firebase_analytics: ^6.0.0
+  firebase_analytics: ^6.0.1
 
-  firebase_crashlytics: ^0.2.0
+  firebase_crashlytics: ^0.2.1
 
-  firebase_auth: ^0.18.0+1
+  firebase_auth: ^0.18.1+1
 
-  cloud_firestore: ^0.14.0+2
+  cloud_firestore: ^0.14.1+2
 
-  firebase_storage: ^4.0.0
+  firebase_storage: ^4.0.1
 
-  firebase_performance: ^0.4.0
+  firebase_performance: ^0.4.0+1
 
-  get: ^3.11.1
+  get: ^3.12.1
 
   intl: ^0.16.1
 
@@ -66,7 +66,7 @@ dependencies:
 
   animated_widgets: ^1.0.6
 
-  flutter_local_notifications: ^1.4.4+4
+  flutter_local_notifications: ^1.4.4+5
 
   flutter_chess_board: ^0.9.4
 
