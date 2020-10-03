@@ -3,7 +3,7 @@ description: A place where all the groups will meet together.
 
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 
-version: 1.0.8+9
+version: 1.0.9+10
 
 environment:
   sdk: ">=2.7.0 <3.0.0"
@@ -74,7 +74,7 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
 
-  flutter_launcher_icons: ^0.8.0
+  flutter_launcher_icons: ^0.8.1
 
 flutter_icons:
   android: "ic_launcher"
