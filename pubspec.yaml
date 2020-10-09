@@ -3,7 +3,7 @@ description: A place where all the groups will meet together.
 
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 
-version: 1.0.9+10
+version: 1.1.0+11
 
 environment:
   sdk: ">=2.7.0 <3.0.0"
@@ -14,19 +14,19 @@ dependencies:
 
   cupertino_icons: ^1.0.0
 
-  firebase_core: ^0.5.0
+  firebase_core: ^0.5.0+1
 
-  firebase_analytics: ^6.0.1
+  firebase_analytics: ^6.0.2
 
-  firebase_crashlytics: ^0.2.1
+  firebase_crashlytics: ^0.2.1+1
 
-  firebase_auth: ^0.18.1+1
+  firebase_auth: ^0.18.1+2
 
-  cloud_firestore: ^0.14.1+2
+  cloud_firestore: ^0.14.1+3
 
   firebase_storage: ^4.0.1
 
-  firebase_performance: ^0.4.0+1
+  firebase_performance: ^0.4.0+2
 
   get: ^3.12.1
 
@@ -66,7 +66,7 @@ dependencies:
 
   animated_widgets: ^1.0.6
 
-  flutter_local_notifications: ^1.4.4+5
+  flutter_local_notifications: ^2.0.0
 
   flutter_chess_board: ^0.9.4
 
